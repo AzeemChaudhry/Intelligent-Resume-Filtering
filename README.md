@@ -26,25 +26,12 @@ This pipeline simplifies CV screening, enhances querying by semantic similarity,
 
 ✅ Extensible and modular — easy to add new extractors or vector stores.
 
+
+
 ![image](https://github.com/user-attachments/assets/e6f383ab-8690-4dfd-91a7-2568e0e7fe7e)
 
 
 
-🧠 Parsing Details
-The pipeline uses a language model (parsing_helper.py) to parse CVs into a strict JSON schema:
-{
-  "skills": ["Python", "NLP", "Machine Learning"],
-  "work_experience": "Explicit work history as a string",
-  "education": "Degree, major, years as a string",
-  "projects": ["Project1 title or description"]
-}
-Missing fields return null or empty lists as appropriate.
 
-📊 Vector Storage
-vector_embed.py encodes each field into a fixed-length vector.
-
-vector_store.py handles Qdrant upserts and searches.
-
-Weights for different fields can be tuned in get_user_requirements() or similar utility.
 
 
