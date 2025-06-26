@@ -1,5 +1,6 @@
-**📄 CV-Parsing-Pipeline**
-***🧠 Overview****
+*📄 CV-Parsing-Pipeline*
+
+***🧠 Overview***
 CV-Parsing-Pipeline is an end-to-end automation pipeline that:
 
 Converts CVs (PDFs) into plain text.
