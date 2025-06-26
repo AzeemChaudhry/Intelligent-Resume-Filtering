@@ -26,23 +26,9 @@ This pipeline simplifies CV screening, enhances querying by semantic similarity,
 
 ✅ Extensible and modular — easy to add new extractors or vector stores.
 
-🧬 Pipeline Structure
-CV-Parsing-Pipeline/
-├── data/
-│   ├── raw_cvs/               # Input CV PDFs
-│   ├── processed_jsons/       # Output structured JSONs
-├── src/
-│   ├── __init__.py
-│   ├── pdf_to_text.py         # Converts PDFs to raw text
-│   ├── parsing_helper.py      # LLM-based information extraction
-│   ├── vector_embed.py        # Generates vector embeddings
-│   ├── vector_store.py        # Qdrant vector DB interactions
-│   ├── pipeline.py            # Orchestrates full process
-├── tests/
-│   ├── test_pipeline.py       # Unit tests
-├── requirements.txt           # Dependencies
-├── README.md                  # Project overview
-└── main.py                    # CLI entry point
+![image](https://github.com/user-attachments/assets/e6f383ab-8690-4dfd-91a7-2568e0e7fe7e)
+
+
 
 🧠 Parsing Details
 The pipeline uses a language model (parsing_helper.py) to parse CVs into a strict JSON schema:
