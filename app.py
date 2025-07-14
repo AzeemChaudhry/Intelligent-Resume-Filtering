@@ -3,7 +3,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from main import cv_parser_pipeline, chatbot, create_vec_db, Resume_data, update_cached_resumes
+from main import cv_parser_pipeline, chatbot, create_vec_db, Resume_data, update_cached_resumes,initialize_collection
 
 SAVE_DIR = "Uploaded_Files"
 chat_history = []
@@ -47,7 +47,9 @@ def save_files(filepaths):
         
         # Process resumes
         candidates = cv_parser_pipeline(SAVE_DIR)
+        initialize_collection()
         create_vec_db(candidates)
+        print("VCDB created\n")
         update_cached_resumes()
         
         return f"Successfully processed {len(processed_files)} resumes: {', '.join(processed_files)}"

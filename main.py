@@ -1,5 +1,3 @@
-# main.py
-
 import os
 import json
 from pathlib import Path
@@ -34,14 +32,24 @@ def get_json_schema():
 
 # ========== LLM JSON Extraction Call ==========
 def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
+    from datetime import datetime
+
     client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
     response = client.chat.completions.create(
         model="Qwen/Qwen2.5-32B-Instruct-AWQ",
         messages=[{"role": "user", "content": prompt}],
         extra_body={"guided_json": schema}
     )
-    print(response.choices[0].message.content)
-    return json.loads(response.choices[0].message.content)
+
+    output_text = response.choices[0].message.content
+
+    # Optional: Create a timestamped log file or just write to a static file
+    with open("llm_responses_log.txt", "a", encoding="utf-8") as f:
+        f.write(f"--- Response at {datetime.now()} ---\n")
+        f.write(output_text + "\n\n")
+
+    print(output_text)
+    return json.loads(output_text)
 
 # ========== Resume Parsing ==========
 def parsing_helper(markdown_text: str, filepath: str) -> dict:
@@ -71,6 +79,33 @@ Extract key structured information from the raw CV text. You must:
 
 ---
 
+###  Special Rule for `work_experience_years`:
+
+- You **must calculate `work_experience_years`** only from **clearly defined start and end dates** present under the **work experience** section.
+- Accept date formats like:  
+  - "1 Nov 2021 -Current"  
+  - "1 Aug 2022 – 30 Oct 2022"  
+  - Month abbreviations (Jan, Feb, etc.) and numeric formats like "02/2021 – 10/2022"
+- If the end date is `"Current"` or `"Present"`, use today’s date for calculation.
+- Do **not** include time from:
+  - Projects
+  - Internships not listed under work experience
+  - Education or training
+- Round total experience to 1 decimal place.
+
+---
+
+###Special Rule for `candidate_summary`:
+
+- If a summary section is explicitly present in the CV (e.g., under "Profile", "Summary", or "About Me"), extract a concise 2–3 sentence version.
+- If **no summary is stated**, **generate** a professional 2–3 sentence summary using **only clearly stated information** from the CV, focusing on:
+  - Key skills
+  - Work experience highlights
+  - Technologies used
+- Do **not** invent or infer any unstated experience or traits.
+
+---
+
 ### 📦 Output JSON Schema:
 
 {json.dumps(schema, indent=2)}
@@ -83,21 +118,13 @@ If a value is missing or not mentioned, use:
 `filepath` must exactly match "{filepath}".  
 No extra formatting — output valid JSON only.
 
-work_experience_years must be calculated only if clearly stated in the text.
+---
 
-For candidate_summary:
-- Extract a concise 2-3 sentence professional summary from the resume
-- Focus on key strengths and career highlights
-- Use only information explicitly stated in the resume
-
-For work_experience:
-- Extract company names and job titles
-- Include duration if clearly specified
+For `work_experience`:
+- Extract company names, job titles, and durations
 - Focus on recent/current positions first
 - Normalize company name variations
-
-Input CV Text:
-{markdown_text}
+- Ignore roles listed under other sections (e.g., "Projects" or "Academics")
 """
     return LLM_call(prompt, schema)
 def cv_parser_pipeline(path: str) -> List[dict]:
@@ -114,16 +141,29 @@ def cv_parser_pipeline(path: str) -> List[dict]:
 # ========== Qdrant Setup ==========
 client = QdrantClient("localhost", port=6333)
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-
 required_fields = ["skills", "education", "work_experience", "projects"]
 
-client.recreate_collection(
-    collection_name="cv_data",
-    vectors_config={
-        f: VectorParams(size=384, distance=Distance.COSINE)
-        for f in required_fields
-    }
-)
+def initialize_collection(collection_name: str = "cv_data"):
+    """Delete the collection if it exists, then create it from scratch"""
+    try:
+        # Check if the collection exists
+        client.get_collection(collection_name)
+        # If no exception is raised, collection exists -> delete it
+        client.delete_collection(collection_name)
+        print(f"Deleted existing collection: {collection_name}")
+    except Exception:
+        # Collection does not exist
+        print(f"No existing collection named: {collection_name}")
+
+    # Create the collection
+    client.create_collection(
+        collection_name=collection_name,
+        vectors_config={
+            f: VectorParams(size=384, distance=Distance.COSINE)
+            for f in required_fields
+        }
+    )
+    print(f"Created collection: {collection_name}")
 
 def zero_vector(dim=384) -> List[float]:
     return [0.0] * dim
@@ -131,7 +171,29 @@ def zero_vector(dim=384) -> List[float]:
 def join_and_embed(field_list: list, model=embedding_model) -> List[float]:
     if not field_list:
         return zero_vector()
-    text = " ".join(field_list)
+
+    flat_strings = []
+
+    for item in field_list:
+        if isinstance(item, str):
+            flat_strings.append(item)
+        elif isinstance(item, dict):
+            # Join all string values in the dict
+            for value in item.values():
+                if isinstance(value, str):
+                    flat_strings.append(value)
+                elif isinstance(value, list):
+                    # If nested list (e.g. technologies), flatten that too
+                    flat_strings.extend([v for v in value if isinstance(v, str)])
+        elif isinstance(item, list):
+            # Flatten nested lists of strings (e.g., [["Python", "C++"]])
+            flat_strings.extend([v for v in item if isinstance(v, str)])
+
+    text = " ".join(flat_strings)
+
+    if not text.strip():
+        return zero_vector()
+
     return model.encode([text])[0].tolist()
 
 def insert_candidate(candidate: dict, collection_name="cv_data"):
@@ -389,7 +451,7 @@ def truncate_history(chat_history, system_prompt, max_tokens=3500):
     """Remove oldest messages until history fits within token limit."""
     while estimate_tokens(system_prompt + "\n".join(f"{r}: {m}" for r, m in chat_history)) > max_tokens:
         if len(chat_history) > 2:
-            chat_history.pop(1)  # Remove oldest non-system message
+            chat_history.pop(1)
         else:
             break
     return chat_history
@@ -398,8 +460,7 @@ def truncate_history(chat_history, system_prompt, max_tokens=3500):
 def summarize_history(chat_history, client):
     """Summarize older messages and replace them with a single summary block."""
     if len(chat_history) <= 5:
-        return chat_history  # Not enough history to summarize
-
+        return chat_history 
     to_summarize = chat_history[:-4]
     preserved = chat_history[-4:]
 
