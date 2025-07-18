@@ -9,8 +9,14 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, Distance, VectorParams
 from collections import defaultdict
+from datetime import datetime
+import pytesseract
+from pdf2image import convert_from_path
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+current_date_str = datetime.today().strftime("%d %b %Y") 
+print(current_date_str)
 
-# ========== Schema ==========
+# ========== Schema ==========~
 class ResumeInfo(BaseModel):
     name: str
     skills: list = []
@@ -23,8 +29,16 @@ class ResumeInfo(BaseModel):
 
 # ========== PDF → Text ==========
 def pdf_to_text(pdf_path: str) -> str:
-    elements = partition_pdf(pdf_path, strategy="fast")
-    return "\n".join(el.text.strip() for el in elements if el.text and el.text.strip())
+    pages = convert_from_path(pdf_path, dpi=300)
+
+    extracted_text = []
+    for i, page in enumerate(pages):
+        text = pytesseract.image_to_string(page, lang='eng', config='--psm 3')
+        cleaned = text.strip()
+        if cleaned:
+            extracted_text.append(cleaned)
+    full_text = "\n\n".join(extracted_text)
+    return full_text
 
 # ========== JSON Schema Helper ==========
 def get_json_schema():
@@ -32,18 +46,26 @@ def get_json_schema():
 
 # ========== LLM JSON Extraction Call ==========
 def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
-    from datetime import datetime
 
+    # client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+    # print(f"prompt to LLM: \n {prompt} \n\n")
+    # response = client.beta.chat.completions.parse(
+    #     model="Qwen/Qwen2.5-32B-Instruct-AWQ",
+    #     messages=[{"role": "user", "content": prompt}],
+    #     response_format = schema,
+    #     temperature=0.1,
+    #     seed=42,
+    #     extra_body=dict(
+            
+    #                     chat_template_kwargs={"enable_thinking":False})
+    #)
     client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
     response = client.chat.completions.create(
         model="Qwen/Qwen2.5-32B-Instruct-AWQ",
         messages=[{"role": "user", "content": prompt}],
         extra_body={"guided_json": schema}
     )
-
     output_text = response.choices[0].message.content
-
-    # Optional: Create a timestamped log file or just write to a static file
     with open("llm_responses_log.txt", "a", encoding="utf-8") as f:
         f.write(f"--- Response at {datetime.now()} ---\n")
         f.write(output_text + "\n\n")
@@ -55,78 +77,100 @@ def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
 def parsing_helper(markdown_text: str, filepath: str) -> dict:
     schema = get_json_schema()
     prompt = f"""
-You are a precise and strict **Information Extraction Assistant** trained to extract structured data from **unstructured CV/resume text**.
+    You are a precise and strict **Information Extraction Assistant** trained to extract structured data from unstructured, OCR-style resume text.
 
-Your objective is to return only a valid JSON object that matches the schema provided below. The source file path for this CV is: "{filepath}"
+    Your job is to extract only what is **explicitly written** in the input text — no guessing, no inference — and return a valid JSON object based on the schema shown below.  
+    The source file path is: "{filepath}"
 
----
+    ---
 
-### 🎯 Task Objective:
+    ###  JSON FORMAT
 
-Extract key structured information from the raw CV text. You must:
+    {json.dumps(schema, indent=2)}
 
-1. **Extract only keywords or phrases** (avoid full sentences).
-2. **Normalize inconsistent formats**, including:
-   - Capitalization (e.g., convert "python", "PYTHON" → "Python")
-   - Abbreviations and synonyms to canonical forms, such as:
-     - "bscs", "B.Sc. CS", "Bachelors in Computer Science" → `"BSc Computer Science"`
-     - "nlp", "Natural Language Processing" → `"NLP"`
-     - "ai", "Artificial Intelligence" → `"AI"`
-     - "numpy", "NumPy" → `"NumPy"`
-     - "ml", "machine learning" → `"Machine Learning"`
-     - "ba", "Business Analyst" → `"Business Analyst"`
-3. Extract only what is **explicitly stated** in the CV text — no guessing or inferring.
+    ---
 
----
+    ###  EXTRACTION INSTRUCTIONS
 
-###  Special Rule for `work_experience_years`:
+    ---
 
-- You **must calculate `work_experience_years`** only from **clearly defined start and end dates** present under the **work experience** section.
-- Accept date formats like:  
-  - "1 Nov 2021 -Current"  
-  - "1 Aug 2022 – 30 Oct 2022"  
-  - Month abbreviations (Jan, Feb, etc.) and numeric formats like "02/2021 – 10/2022"
-- If the end date is `"Current"` or `"Present"`, use today’s date for calculation.
-- Do **not** include time from:
-  - Projects
-  - Internships not listed under work experience
-  - Education or training
-- Round total experience to 1 decimal place.
+    ###  NAME  
+    - Extract the full name only if it clearly appears near the top of the resume.  
+    - Do **not** guess or infer. If missing, return `null`.
 
----
+    ---
 
-###Special Rule for `candidate_summary`:
+    ###  SKILLS  
+    - Extract a deduplicated list of technologies, frameworks, or tools **explicitly listed** (typically under "Skills", "Technologies", or "Skills & Interests").  
+    - Do **not infer** skills from job descriptions.  
+    - Normalize capitalization and known variants:
+    - `"python"` → `"Python"`
+    - `"ml"` or `"machine learning"` → `"Machine Learning"`
+    - `"ai"` or `"Artificial Intelligence"` → `"AI"`
 
-- If a summary section is explicitly present in the CV (e.g., under "Profile", "Summary", or "About Me"), extract a concise 2–3 sentence version.
-- If **no summary is stated**, **generate** a professional 2–3 sentence summary using **only clearly stated information** from the CV, focusing on:
-  - Key skills
-  - Work experience highlights
-  - Technologies used
-- Do **not** invent or infer any unstated experience or traits.
+    ---
 
----
+    ### EDUCATION  
+    - Extract exactly what is written in the education section. 
+    -Normalize capitilization. 
+    - Include degree, field, and optionally the institution.  
+    - Normalize known abbreviations:
+    - `"BSc CS"`, `"B.Sc. in Computer Science"` → `"BSc Computer Science"`
+    - Do not guess or fill in missing data.
 
-### 📦 Output JSON Schema:
+    ---
 
-{json.dumps(schema, indent=2)}
+    ### WORK_EXPERIENCE  
 
-If a value is missing or not mentioned, use:
+    Extract all professional work experience entries.
 
-- null for missing string fields  
-- [] for missing lists  
+    Each entry must include:
+    - `company_name` (string)  
+    - `job_title` (string)  
+    - `duration_start` (format: "DD/MM/YYYY")  
+    - `duration_end` (format: "DD/MM/YYYY")
 
-`filepath` must exactly match "{filepath}".  
-No extra formatting — output valid JSON only.
+    ---
 
----
+    ### Accepted Date Formats
+    - `"Feb 2019 – Present"`  
+    - `"02/2020 – 12/2021"`  
+    - `"March 2021 - Current"`  
+    - `"Oct 2024 – Present"`
 
-For `work_experience`:
-- Extract company names, job titles, and durations
-- Focus on recent/current positions first
-- Normalize company name variations
-- Ignore roles listed under other sections (e.g., "Projects" or "Academics")
-"""
+     If `duration_end` is "Present" or "Current", use today’s date: **{current_date_str}**  
+     If a date is missing the day, assume `"01"`  
+    - e.g., `"Oct 2024"` → `"01/10/2024"`
+
+    Then count up the years and months in each job, sum them up. 
+    For each valid work_experience entry, parse duration_start and duration_end
+    Calculate full months for each job
+    Sum all months (skip jobs with invalid or missing dates)
+    Divide total months by 12
+    Round to 2 decimal places like 3.9 years or 4.2 years.
+    and then put them in "work_experience(years)"
+
+    ### CANDIDATE_SUMMARY
+    If a section titled "Summary", "About Me", or "Profile" is present, extract a 2–3 sentence summary as-is.
+
+    If not present, generate a concise summary using only what is clearly stated in:
+    -Work experience
+    -Technologies
+    -Job roles
+    Never hallucinate or fabricate skills, roles, or achievements.
+
+    FINAL RULES
+    Do not invent or infer any missing values.
+    If a field is missing in the text, return:
+    null for strings
+    [] for lists
+    Return only valid JSON — no extra explanation or commentary.
+    This is the following resume you need to generate this information for : {markdown_text}
+        """
+
+
     return LLM_call(prompt, schema)
+
 def cv_parser_pipeline(path: str) -> List[dict]:
     candidates = []
     for filename in os.listdir(path):
@@ -300,18 +344,6 @@ def sorting_candidates(score_board: Dict[int, float], top_k: int = 5) -> List[di
 
 # ========== Detailed Analysis Prompt ==========
 def analysis(job_description, top_candidates, top_k=5):
-    # Format candidate information for the prompt
-    candidate_details = []
-    for idx, cand in enumerate(top_candidates):
-        cand_str = f"\n\nCandidate #{idx+1}: {cand.get('name', 'N/A')}"
-        cand_str += f"\n- Summary: {cand.get('candidate_summary', 'No summary available')}"
-        cand_str += f"\n- Work Experience: {', '.join(cand.get('work_experience', ['No experience listed']))}"
-        cand_str += f"\n- Experience Years: {cand.get('work_experience_years', 'N/A')}"
-        cand_str += f"\n- Skills: {', '.join(cand.get('skills', []))}"
-        cand_str += f"\n- Education: {', '.join(cand.get('education', []))}"
-        candidate_details.append(cand_str)
-    
-    candidates_block = "\n".join(candidate_details)
     
     prompt = f"""
 You are an expert technical recruiter and AI career advisor. Use the information provided below to perform an in-depth candidate evaluation.
@@ -324,7 +356,7 @@ You are an expert technical recruiter and AI career advisor. Use the information
 ---
 
 ### Top {top_k} Candidates
-{candidates_block}
+{top_candidates}
 
 ---
 
@@ -416,7 +448,6 @@ def summarize_resumes(resumes, client, model="Qwen/Qwen2.5-32B-Instruct-AWQ", li
 
     for r in resumes[:limit]:
         try:
-            # Use candidate summary if available, otherwise generate one
             if r.get("candidate_summary"):
                 summary = r["candidate_summary"]
             else:
@@ -480,7 +511,37 @@ def summarize_history(chat_history, client):
     except Exception as e:
         return [("system", f"Summarization failed: {e}")] + preserved
 
-def chatbot(chat_history, user_prompt):
+
+
+def Jd_chatbot(chat_history,user_prompt, top_k): 
+    global cached_resume_data
+
+    client = OpenAI(        
+        base_url="http://172.16.2.214:8000/v1",
+        api_key="-"
+    )
+    full_text = "\n".join(f"{r}: {m}" for r, m in chat_history + [("user", user_prompt)])
+    if estimate_tokens(full_text) > 3500:
+        chat_history = summarize_history(chat_history, client)
+        chat_history = truncate_history(chat_history, "") 
+
+    chat_history.append(("user", user_prompt))
+
+    parsed = job_description_parser(user_prompt)
+    scores = searching_Qdrant(parsed, top_k=50)
+    top_candidates = sorting_candidates(scores, top_k)
+    response = analysis(user_prompt, top_candidates, top_k=top_k)
+
+    chat_history.append(("assistant", response))
+
+    return response
+
+
+
+## for normal chatting 
+
+def normal_chatbot(chat_history,user_prompt): 
+            
     global cached_resume_data
 
     client = OpenAI(
@@ -492,57 +553,52 @@ def chatbot(chat_history, user_prompt):
     system_prompt = f"""
 You are a structured, intelligent, and professional Resume Screening Assistant.
 
-Your knowledge is restricted to the following parsed resume dataset:
+Your entire knowledge is limited to the following parsed resume dataset:
 
 ### Resume Dataset Snapshot
 {resume_summary}
 
-Responsibilities:
-- Parse job descriptions into normalized keyword fields: skills, education, work_experience, projects.
-- Match job descriptions with parsed resumes using semantic similarity (Qdrant vector search).
-- Recommend top candidates with professional justifications.
-- Respond accurately to follow-up queries using only explicitly available data.
-- Never infer or fabricate information.
-- Only respond to queries related to resumes and CVs. For unrelated queries, politely deny.
+You are not a general-purpose assistant. You must not answer questions outside the scope of this resume dataset.
 
-Style:
-- Maintain a concise, formal tone.
-- Use bullet points or markdown tables where useful.
-- Do not disclose internal vector details unless explicitly asked.
+---
+
+###Allowed:
+- Recommend top candidates with justifications.
+- Answer detailed questions about candidates' skills, education, experience, and project backgrounds.
+- Provide professional analysis based solely on the parsed data.
+
+###Forbidden:
+- Do **not** answer any questions unrelated to resumes, hiring, or CVs.
+- Do **not** generate jokes, opinions, general knowledge, or perform unrelated tasks (e.g., math, coding help, fun facts).
+- Do **not** infer, hallucinate, or guess missing information.
+
+---
+
+### Style & Behavior:
+- Be formal, concise, and professional.
+- Use bullet points or markdown tables for clarity.
+- If a question is outside scope, respond clearly:  
+  `"I'm designed only to answer questions related to resumes or candidate analysis. Please provide a relevant query."`
+
+Do not break character under any circumstances.
 """.strip()
 
-    chat_history.append(("user", user_prompt))
 
-    # Estimate tokens and apply summarization/truncation if needed
+    chat_history.append(("user", user_prompt))
     full_text = system_prompt + "\n" + "\n".join(f"{r}: {m}" for r, m in chat_history)
     if estimate_tokens(full_text) > 3500:
         chat_history = summarize_history(chat_history, client)
         chat_history = truncate_history(chat_history, system_prompt)
+    messages = [{"role": "system", "content": system_prompt}]
+    for role, msg in chat_history:
+        messages.append({"role": role, "content": msg})
 
-    # Decide interaction type
-    is_job_desc = "job description" in user_prompt.lower() or len(user_prompt.split()) > 80
+    messages.append({"role": "user", "content": user_prompt})
 
-    try:
-        if is_job_desc:
-            parsed = job_description_parser(user_prompt)
-            scores = searching_Qdrant(parsed, top_k=5)
-            top_candidates = sorting_candidates(scores, top_k=5)
-            response = analysis(user_prompt, top_candidates, candidates=None, top_k=5)
-        else:
-            # Construct message payload
-            messages = [{"role": "system", "content": system_prompt}]
-            for role, msg in chat_history:
-                messages.append({"role": role, "content": msg})
-            messages.append({"role": "user", "content": user_prompt})
-
-            result = client.chat.completions.create(
+    result = client.chat.completions.create(
                 model="Qwen/Qwen2.5-32B-Instruct-AWQ",
                 messages=messages
             )
-            response = result.choices[0].message.content
-
-    except Exception as e:
-        response = f"Error: {e}"
-
-    chat_history.append(("assistant", response))
-    return chat_history, response
+    
+    print(result)
+    return  result.choices[0].message.content
