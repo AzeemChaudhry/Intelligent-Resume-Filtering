@@ -1,7 +1,7 @@
 import os
 import json
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 from pydantic import BaseModel
 from openai import OpenAI
 from unstructured.partition.pdf import partition_pdf
@@ -14,9 +14,8 @@ import pytesseract
 from pdf2image import convert_from_path
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 current_date_str = datetime.today().strftime("%d %b %Y") 
-print(current_date_str)
 
-# ========== Schema ==========~
+#---------------------------------------------------------------------
 class ResumeInfo(BaseModel):
     name: str
     skills: list = []
@@ -26,54 +25,48 @@ class ResumeInfo(BaseModel):
     candidate_summary: str
     work_experience_years: int
     filepath: str
-
-# ========== PDF → Text ==========
+#---------------------------------------------------------------------
 def pdf_to_text(pdf_path: str) -> str:
-    pages = convert_from_path(pdf_path, dpi=300)
+    try:
+        pages = convert_from_path(pdf_path, dpi=300)
+        extracted_text = []
+        for i, page in enumerate(pages):
+            text = pytesseract.image_to_string(page, lang='eng', config='--psm 3')
+            cleaned = text.strip()
+            if cleaned:
+                extracted_text.append(cleaned)
+        full_text = "\n\n".join(extracted_text)
+        return full_text
+    except Exception as e:
+        print(f"Error extracting text from {pdf_path}: {e}")
+        return ""
 
-    extracted_text = []
-    for i, page in enumerate(pages):
-        text = pytesseract.image_to_string(page, lang='eng', config='--psm 3')
-        cleaned = text.strip()
-        if cleaned:
-            extracted_text.append(cleaned)
-    full_text = "\n\n".join(extracted_text)
-    return full_text
-
-# ========== JSON Schema Helper ==========
+#---------------------------------------------------------------------
 def get_json_schema():
     return ResumeInfo.model_json_schema()
-
-# ========== LLM JSON Extraction Call ==========
+#---------------------------------------------------------------------
 def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
+    try:
+        client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        response = client.chat.completions.create(
+            model="Qwen/Qwen2.5-32B-Instruct-AWQ",
+            messages=[{"role": "user", "content": prompt}],
+            extra_body={"guided_json": schema}
+        )
+        output_text = response.choices[0].message.content
+        
+        print(output_text)
+    
+        with open("llm_responses_log.txt", "a", encoding="utf-8") as f:
+            f.write(f"--- Response at {datetime.now()} ---\n")
+            f.write(output_text + "\n\n")
 
-    # client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
-    # print(f"prompt to LLM: \n {prompt} \n\n")
-    # response = client.beta.chat.completions.parse(
-    #     model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-    #     messages=[{"role": "user", "content": prompt}],
-    #     response_format = schema,
-    #     temperature=0.1,
-    #     seed=42,
-    #     extra_body=dict(
-            
-    #                     chat_template_kwargs={"enable_thinking":False})
-    #)
-    client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
-    response = client.chat.completions.create(
-        model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-        messages=[{"role": "user", "content": prompt}],
-        extra_body={"guided_json": schema}
-    )
-    output_text = response.choices[0].message.content
-    with open("llm_responses_log.txt", "a", encoding="utf-8") as f:
-        f.write(f"--- Response at {datetime.now()} ---\n")
-        f.write(output_text + "\n\n")
+        return json.loads(output_text)
+    except Exception as e:
+        print(f"Error in LLM call: {e}")
+        return {}
 
-    print(output_text)
-    return json.loads(output_text)
-
-# ========== Resume Parsing ==========
+#---------------------------------------------------------------------
 def parsing_helper(markdown_text: str, filepath: str) -> dict:
     schema = get_json_schema()
     prompt = f"""
@@ -82,23 +75,14 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     Your job is to extract only what is **explicitly written** in the input text — no guessing, no inference — and return a valid JSON object based on the schema shown below.  
     The source file path is: "{filepath}"
 
-    ---
-
     ###  JSON FORMAT
-
     {json.dumps(schema, indent=2)}
 
-    ---
-
     ###  EXTRACTION INSTRUCTIONS
-
-    ---
 
     ###  NAME  
     - Extract the full name only if it clearly appears near the top of the resume.  
     - Do **not** guess or infer. If missing, return `null`.
-
-    ---
 
     ###  SKILLS  
     - Extract a deduplicated list of technologies, frameworks, or tools **explicitly listed** (typically under "Skills", "Technologies", or "Skills & Interests").  
@@ -108,8 +92,6 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     - `"ml"` or `"machine learning"` → `"Machine Learning"`
     - `"ai"` or `"Artificial Intelligence"` → `"AI"`
 
-    ---
-
     ### EDUCATION  
     - Extract exactly what is written in the education section. 
     -Normalize capitilization. 
@@ -118,10 +100,7 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     - `"BSc CS"`, `"B.Sc. in Computer Science"` → `"BSc Computer Science"`
     - Do not guess or fill in missing data.
 
-    ---
-
     ### WORK_EXPERIENCE  
-
     Extract all professional work experience entries.
 
     Each entry must include:
@@ -130,15 +109,13 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     - `duration_start` (format: "DD/MM/YYYY")  
     - `duration_end` (format: "DD/MM/YYYY")
 
-    ---
-
     ### Accepted Date Formats
     - `"Feb 2019 – Present"`  
     - `"02/2020 – 12/2021"`  
     - `"March 2021 - Current"`  
     - `"Oct 2024 – Present"`
 
-     If `duration_end` is "Present" or "Current", use today’s date: **{current_date_str}**  
+     If `duration_end` is "Present" or "Current", use today's date: **{current_date_str}**  
      If a date is missing the day, assume `"01"`  
     - e.g., `"Oct 2024"` → `"01/10/2024"`
 
@@ -166,23 +143,27 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     [] for lists
     Return only valid JSON — no extra explanation or commentary.
     This is the following resume you need to generate this information for : {markdown_text}
-        """
-
+    """
 
     return LLM_call(prompt, schema)
-
+#---------------------------------------------------------------------
 def cv_parser_pipeline(path: str) -> List[dict]:
     candidates = []
     for filename in os.listdir(path):
         file_path = os.path.join(path, filename)
         if not os.path.isfile(file_path):
             continue
-        text = pdf_to_text(file_path)
-        structured = parsing_helper(text, file_path)
-        candidates.append(structured)
+        try:
+            text = pdf_to_text(file_path)
+            if text:
+                structured = parsing_helper(text, file_path)
+                if structured:
+                    candidates.append(structured)
+        except Exception as e:
+            print(f"Error processing {filename}: {e}")
     return candidates
 
-# ========== Qdrant Setup ==========
+#---------------------------------------------------------------------
 client = QdrantClient("localhost", port=6333)
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 required_fields = ["skills", "education", "work_experience", "projects"]
@@ -190,16 +171,12 @@ required_fields = ["skills", "education", "work_experience", "projects"]
 def initialize_collection(collection_name: str = "cv_data"):
     """Delete the collection if it exists, then create it from scratch"""
     try:
-        # Check if the collection exists
         client.get_collection(collection_name)
-        # If no exception is raised, collection exists -> delete it
         client.delete_collection(collection_name)
         print(f"Deleted existing collection: {collection_name}")
     except Exception:
-        # Collection does not exist
         print(f"No existing collection named: {collection_name}")
 
-    # Create the collection
     client.create_collection(
         collection_name=collection_name,
         vectors_config={
@@ -208,38 +185,33 @@ def initialize_collection(collection_name: str = "cv_data"):
         }
     )
     print(f"Created collection: {collection_name}")
-
+#---------------------------------------------------------------------
 def zero_vector(dim=384) -> List[float]:
     return [0.0] * dim
-
+#---------------------------------------------------------------------
 def join_and_embed(field_list: list, model=embedding_model) -> List[float]:
     if not field_list:
         return zero_vector()
 
     flat_strings = []
-
     for item in field_list:
         if isinstance(item, str):
             flat_strings.append(item)
         elif isinstance(item, dict):
-            # Join all string values in the dict
             for value in item.values():
                 if isinstance(value, str):
                     flat_strings.append(value)
                 elif isinstance(value, list):
-                    # If nested list (e.g. technologies), flatten that too
                     flat_strings.extend([v for v in value if isinstance(v, str)])
         elif isinstance(item, list):
-            # Flatten nested lists of strings (e.g., [["Python", "C++"]])
             flat_strings.extend([v for v in item if isinstance(v, str)])
 
     text = " ".join(flat_strings)
-
     if not text.strip():
         return zero_vector()
 
     return model.encode([text])[0].tolist()
-
+#---------------------------------------------------------------------------------
 def insert_candidate(candidate: dict, collection_name="cv_data"):
     vector_data = {f: join_and_embed(candidate.get(f, [])) for f in required_fields}
     payload = {
@@ -258,20 +230,18 @@ def insert_candidate(candidate: dict, collection_name="cv_data"):
         vector=vector_data,
         payload=payload
     )])
-
+#-------------------------------------------------------------------------------
 def create_vec_db(candidates: List[dict]):
     for cand in candidates:
         insert_candidate(cand)
 
-# ========== Job Description Parsing ==========
+#------------------------------------------------------------------------------
 def job_description_parser(job_description: str) -> dict:
     schema = get_json_schema()
     prompt = f"""
 You are a highly accurate and strict **Information Extraction Assistant**.
 
 Your task is to extract **only explicitly stated information** from a **job description** and convert it into a structured JSON format. The data must be extracted as **normalized, lowercase keywords** and must strictly follow the rules and schema provided.
-
----
 
 ### Extraction Instructions:
 1. Extract only **keywords or short phrases** — avoid full sentences.
@@ -286,10 +256,7 @@ Your task is to extract **only explicitly stated information** from a **job desc
 3. Do **not infer or assume** any information — extract only what is **explicitly stated**.
 4. Count `work_experience_years` **only if a specific number of years is clearly mentioned**.
 
----
-
 ### Required JSON Output Schema:
-
 {json.dumps(schema, indent=2)}
 
 If a field is not present in the job description, return empty lists or null/0 for years.
@@ -301,7 +268,7 @@ Job Description:
 """
     return LLM_call(prompt, schema)
 
-# ========== Qdrant Search & Ranking ==========
+#---------------------------------------------------------------------------------------
 def searching_Qdrant(parsed: dict, top_k: int = 5, weights: dict = None) -> Dict[int, float]:
     job_vectors = {f: join_and_embed(parsed.get(f, [])) for f in required_fields}
     if weights is None:
@@ -323,13 +290,16 @@ def searching_Qdrant(parsed: dict, top_k: int = 5, weights: dict = None) -> Dict
         for hit in hits:
             scores[hit.id] += hit.score * weights.get(f, 0)
     return scores
+#----------------------------------------------------------------------------
 
-def sorting_candidates(score_board: Dict[int, float], top_k: int = 5) -> List[dict]:
-    ranked = sorted(score_board.items(), key=lambda x: x[1], reverse=True)[:top_k]
+def sorting_candidates(score_board: Dict[int, float]) -> List[dict]:
+    ranked = sorted(score_board.items(), key=lambda x: x[1], reverse=True)
     candidate_ids = {cid for cid, _ in ranked}
+
     results = []
     offset = 0
-    while len(results) < top_k:
+
+    while len(results) < len(candidate_ids):
         pts, next_offset = client.scroll("cv_data", with_payload=True, with_vectors=False, limit=100, offset=offset)
         for pt in pts:
             if pt.id in candidate_ids:
@@ -340,25 +310,19 @@ def sorting_candidates(score_board: Dict[int, float], top_k: int = 5) -> List[di
         if not next_offset:
             break
         offset = next_offset
+
     return results
 
-# ========== Detailed Analysis Prompt ==========
-def analysis(job_description, top_candidates, top_k=5):
-    
-    prompt = f"""
-You are an expert technical recruiter and AI career advisor. Use the information provided below to perform an in-depth candidate evaluation.
-
----
+#-------------------------------------------------------------------------------------------------------------------
+def analysis(job_description, selected_candidates, top_k=5):
+    system_prompt = f"""
+You are an expert technical recruiter. Use the information provided below to perform an in-depth candidate evaluation.
 
 ### Job Description
 {job_description}
 
----
-
-### Top {top_k} Candidates
-{top_candidates}
-
----
+### Selected Candidates for Analysis
+{selected_candidates}
 
 ### Task
 Analyze the candidates with respect to the job description and:
@@ -390,60 +354,61 @@ Analyze the candidates with respect to the job description and:
    - Present results in clear markdown
    - Start with your top recommended candidate
    - Do not disclose vector scores
-
----
 """
-    client = OpenAI(
-        base_url="http://172.16.2.214:8000/v1", 
-        api_key="-" 
-    )
-    response = client.chat.completions.create(
-        model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
+    
+    try:
+        client_llm = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        response = client_llm.chat.completions.create(
+            model="Qwen/Qwen2.5-32B-Instruct-AWQ",
+            messages=[{"role": "system", "content": system_prompt}]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error in analysis: {str(e)}"
 
-
-###--------------------------------------------------
-
-
-##writing a function for chatbot
+#---------------------------------------------------------------------------------------------
 def Resume_data():
     all_data = []
     offset = None
 
     while True:
-        scroll_result, next_offset = client.scroll(
-            collection_name="cv_data",
-            with_payload=True,
-            with_vectors=True,
-            limit=100,
-            offset=offset
-        )
+        try:
+            scroll_result, next_offset = client.scroll(
+                collection_name="cv_data",
+                with_payload=True,
+                with_vectors=True,
+                limit=100,
+                offset=offset
+            )
 
-        for point in scroll_result:
-            all_data.append({
-                "id": point.id,
-                "name": point.payload.get("name", "unknown"),
-                "filepath": point.payload.get("filepath", ""),
-                "skills": point.payload.get("skills", []),
-                "education": point.payload.get("education", []),
-                "work_experience": point.payload.get("work_experience", []),
-                "projects": point.payload.get("projects", []),
-                "candidate_summary": point.payload.get("candidate_summary", ""),
-                "work_experience_years": point.payload.get("work_experience_years", 0)
-            })
+            for point in scroll_result:
+                all_data.append({
+                    "id": point.id,
+                    "name": point.payload.get("name", "unknown"),
+                    "filepath": point.payload.get("filepath", ""),
+                    "skills": point.payload.get("skills", []),
+                    "education": point.payload.get("education", []),
+                    "work_experience": point.payload.get("work_experience", []),
+                    "projects": point.payload.get("projects", []),
+                    "candidate_summary": point.payload.get("candidate_summary", ""),
+                    "work_experience_years": point.payload.get("work_experience_years", 0)
+                })
 
-        if next_offset is None:
+            if next_offset is None:
+                break
+            offset = next_offset
+        except Exception as e:
+            print(f"Error retrieving resume data: {e}")
             break
-        offset = next_offset
 
     return all_data
+#-----------------------------------------------------------------------------------------------------
 def update_cached_resumes():
     global cached_resume_data
     cached_resume_data = Resume_data() 
+#-----------------------------------------------------------------------------------------------------
 
-def summarize_resumes(resumes, client, model="Qwen/Qwen2.5-32B-Instruct-AWQ", limit=10):
+def summarize_resumes(resumes, client_llm, model="Qwen/Qwen2.5-32B-Instruct-AWQ", limit=10):
     summary_list = []
 
     for r in resumes[:limit]:
@@ -459,24 +424,25 @@ def summarize_resumes(resumes, client, model="Qwen/Qwen2.5-32B-Instruct-AWQ", li
                     "experience_years": r.get("work_experience_years", 0)
                 }
                 prompt = f"Create a 1-sentence professional summary for: {json.dumps(raw_profile)}"
-                result = client.chat.completions.create(model=model, messages=[{"role": "user", "content": prompt}])
+                result = client_llm.chat.completions.create(model=model, messages=[{"role": "user", "content": prompt}])
                 summary = result.choices[0].message.content.strip()
             
             exp_years = r.get("work_experience_years", 0)
             summary_list.append(f"- **{r.get('name', 'Unknown')}** ({exp_years} yrs exp): {summary}")
 
         except Exception as e:
-            summary_list.append(f"- **{r.get('name', 'Unknown')}**: ❌ Failed to summarize ({e})")
+            summary_list.append(f"- **{r.get('name', 'Unknown')}**: Failed to summarize ({e})")
 
     return "\n".join(summary_list)
 
-
 cached_resume_data = []
+#-----------------------------------------------------------------------------------------
 
 def estimate_tokens(text):
     """Rough estimation: 1 word ≈ 1.5 tokens."""
     return int(len(text.split()) * 1.5)
 
+#----------------------------------------------------------------------------------------------
 
 def truncate_history(chat_history, system_prompt, max_tokens=3500):
     """Remove oldest messages until history fits within token limit."""
@@ -486,9 +452,9 @@ def truncate_history(chat_history, system_prompt, max_tokens=3500):
         else:
             break
     return chat_history
+#------------------------------------------------------------------------------------
 
-
-def summarize_history(chat_history, client):
+def summarize_history(chat_history, client_llm):
     """Summarize older messages and replace them with a single summary block."""
     if len(chat_history) <= 5:
         return chat_history 
@@ -497,7 +463,7 @@ def summarize_history(chat_history, client):
 
     try:
         history_text = "\n".join(f"{role}: {msg}" for role, msg in to_summarize)
-        summary_result = client.chat.completions.create(
+        summary_result = client_llm.chat.completions.create(
             model="Qwen/Qwen2.5-32B-Instruct-AWQ",
             messages=[
                 {"role": "system", "content": "Summarize this conversation briefly:"},
@@ -511,46 +477,114 @@ def summarize_history(chat_history, client):
     except Exception as e:
         return [("system", f"Summarization failed: {e}")] + preserved
 
+#-------------------------------------------------------------------
+
+def display_all_candidates(candidates: List[dict]) -> str:
+    candidate_summaries = []
+    for idx, candidate in enumerate(candidates, 1):
+        summary = f"""Candidate #{idx}
+                ---------------
+                Name       : {candidate.get("name", "N/A")}
+                Experience : {candidate.get("work_experience_years", "N/A")} years
+                Skills     : {", ".join(candidate.get("skills", [])) or "N/A"}
+                Summary    : {candidate.get("candidate_summary", "N/A")}
+                Filepath   : {candidate.get("filepath", "N/A")}
+                """
+        candidate_summaries.append(summary)
+
+    return "\n".join(candidate_summaries)
+
+#-----------------------------------------------------------------------------------------
+
+def filter_selected_candidates(all_candidates: List[dict], selected_indexes: List[int]) -> List[dict]:
+    selected = []
+    for idx in selected_indexes:
+        if 1 <= idx <= len(all_candidates):
+            selected.append(all_candidates[idx - 1])
+    return selected
+
+#----------------------------------------------------------------------------------------------------------------
+
+def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_candidates=None, top_k=5):
+    global cached_resume_data
+    try:
+        client_llm = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+
+        chat_history.append(("user", user_prompt))
+        full_text = "\n".join(f"{r}: {m}" for r, m in chat_history)
+
+        if estimate_tokens(full_text) > 3500:
+            chat_history = summarize_history(chat_history, client_llm)
+            chat_history = truncate_history(chat_history, "")
+
+        if selected_indexes is None or all_candidates is None:
+            parsed = job_description_parser(user_prompt)
+            scores = searching_Qdrant(parsed, top_k)
+            top_candidates = sorting_candidates(scores)
+            display = display_all_candidates(top_candidates)
+
+            return {
+                "stage": "selection",
+                "candidates": top_candidates,
+                "candidates_display": display,
+                "chat_history": chat_history,
+                "job_description": user_prompt
+            }
+
+        selected = filter_selected_candidates(all_candidates, selected_indexes)
+        if not selected:
+            error_msg = "No valid candidates selected for analysis."
+            chat_history.append(("assistant", error_msg))
+            return {
+                "stage": "analysis",
+                "response": error_msg,
+                "chat_history": chat_history
+            }
+
+        # Perform analysis
+        result = analysis(user_prompt, selected, top_k=len(selected))
+        chat_history.append(("assistant", result))
+
+        return {
+            "stage": "analysis",
+            "response": result,
+            "chat_history": chat_history
+        }
+
+    except Exception as e:
+        error_msg = f"Error in unified JD pipeline: {str(e)}"
+        chat_history.append(("assistant", error_msg))
+        return {
+            "stage": "error",
+            "response": error_msg,
+            "chat_history": chat_history
+        }
+
+# ----------------------------------------------------------------------------------------------------
+
+# def analyze_selected_candidates(job_description: str, all_candidates: List[dict], selected_indexes: List[int]) -> str:
+#     """Analyze selected candidates"""
+#     try:
+#         selected_candidates = filter_selected_candidates(all_candidates, selected_indexes)
+#         if not selected_candidates:
+#             return "No valid candidates selected for analysis."
+        
+#         response = analysis(job_description, selected_candidates, top_k=len(selected_candidates))
+#         return response
+#     except Exception as e:
+#         return f"Error in analysis: {str(e)}"
 
 
-def Jd_chatbot(chat_history,user_prompt, top_k): 
+#---------------------------------------------------------------------------------
+
+def normal_chatbot(chat_history, user_prompt): 
     global cached_resume_data
 
-    client = OpenAI(        
-        base_url="http://172.16.2.214:8000/v1",
-        api_key="-"
-    )
-    full_text = "\n".join(f"{r}: {m}" for r, m in chat_history + [("user", user_prompt)])
-    if estimate_tokens(full_text) > 3500:
-        chat_history = summarize_history(chat_history, client)
-        chat_history = truncate_history(chat_history, "") 
-
-    chat_history.append(("user", user_prompt))
-
-    parsed = job_description_parser(user_prompt)
-    scores = searching_Qdrant(parsed, top_k=50)
-    top_candidates = sorting_candidates(scores, top_k)
-    response = analysis(user_prompt, top_candidates, top_k=top_k)
-
-    chat_history.append(("assistant", response))
-
-    return response
-
-
-
-## for normal chatting 
-
-def normal_chatbot(chat_history,user_prompt): 
-            
-    global cached_resume_data
-
-    client = OpenAI(
-        base_url="http://172.16.2.214:8000/v1",
-        api_key="-"
-    )
-
-    resume_summary = summarize_resumes(cached_resume_data,client=client)
-    system_prompt = f"""
+    try:
+        client_llm = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        resume_summary = summarize_resumes(cached_resume_data,client_llm)
+        
+        system_prompt = f"""
 You are a structured, intelligent, and professional Resume Screening Assistant.
 
 Your entire knowledge is limited to the following parsed resume dataset:
@@ -560,19 +594,15 @@ Your entire knowledge is limited to the following parsed resume dataset:
 
 You are not a general-purpose assistant. You must not answer questions outside the scope of this resume dataset.
 
----
-
-###Allowed:
+### Allowed:
 - Recommend top candidates with justifications.
 - Answer detailed questions about candidates' skills, education, experience, and project backgrounds.
 - Provide professional analysis based solely on the parsed data.
 
-###Forbidden:
+### Forbidden:
 - Do **not** answer any questions unrelated to resumes, hiring, or CVs.
 - Do **not** generate jokes, opinions, general knowledge, or perform unrelated tasks (e.g., math, coding help, fun facts).
 - Do **not** infer, hallucinate, or guess missing information.
-
----
 
 ### Style & Behavior:
 - Be formal, concise, and professional.
@@ -583,22 +613,88 @@ You are not a general-purpose assistant. You must not answer questions outside t
 Do not break character under any circumstances.
 """.strip()
 
+        chat_history.append(("user", user_prompt))
+        full_text = system_prompt + "\n" + "\n".join(f"{r}: {m}" for r, m in chat_history)
+        
+        if estimate_tokens(full_text) > 3500:
+            chat_history = summarize_history(chat_history, client_llm)
+            chat_history = truncate_history(chat_history, system_prompt)
+        
+        messages = [{"role": "system", "content": system_prompt}]
+        for role, msg in chat_history:
+            messages.append({"role": role, "content": msg})
 
-    chat_history.append(("user", user_prompt))
-    full_text = system_prompt + "\n" + "\n".join(f"{r}: {m}" for r, m in chat_history)
-    if estimate_tokens(full_text) > 3500:
-        chat_history = summarize_history(chat_history, client)
-        chat_history = truncate_history(chat_history, system_prompt)
-    messages = [{"role": "system", "content": system_prompt}]
-    for role, msg in chat_history:
-        messages.append({"role": role, "content": msg})
-
-    messages.append({"role": "user", "content": user_prompt})
-
-    result = client.chat.completions.create(
-                model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-                messages=messages
-            )
+        result = client_llm.chat.completions.create(
+            model="Qwen/Qwen2.5-32B-Instruct-AWQ",
+            messages=messages
+        )
+        
+        response = result.choices[0].message.content
+        chat_history.append(("assistant", response))
+        return response
     
-    print(result)
-    return  result.choices[0].message.content
+    except Exception as e:
+        return f"Error in chatbot: {str(e)}"
+
+#---------------------------------------------------------------------
+# def Jd_chatbot(chat_history, user_prompt, top_k=5): 
+#     global cached_resume_data
+#     print("\nAnalyzing Clients\n")
+#     try:
+#         client_llm = OpenAI(        
+#             base_url="http://172.16.2.214:8000/v1",
+#             api_key="-"
+#         )
+
+#         # Step 1: Truncate history if token limit exceeded
+#         full_text = "\n".join(f"{r}: {m}" for r, m in chat_history + [("user", user_prompt)])
+#         if estimate_tokens(full_text) > 3500:
+#             chat_history = summarize_history(chat_history, client_llm)
+#             chat_history = truncate_history(chat_history, "") 
+        
+#         chat_history.append(("user", user_prompt))
+        
+#         # Step 2: Parse job description and find candidates
+#         parsed = job_description_parser(user_prompt)
+#         scores = searching_Qdrant(parsed, top_k)
+#         top_candidates = sorting_candidates(scores)
+        
+#         # Step 3: Display candidates for selection
+#         candidates_display = display_all_candidates(top_candidates)
+        
+#         # Return candidates for selection (this will be handled by the UI)
+#         return {
+#             "candidates": top_candidates,
+#             "candidates_display": candidates_display,
+#             "chat_history": chat_history,
+#             "job_description": user_prompt
+#         }
+        
+#     except Exception as e:
+#         error_msg = f"Error in JD chatbot: {str(e)}"
+#         chat_history.append(("assistant", error_msg))
+#         return {
+#             "candidates": [],
+#             "candidates_display": error_msg,
+#             "chat_history": chat_history,
+#             "job_description": user_prompt
+#         }
+#---------------------------------------------------------------------
+def complete_jd_analysis(job_description, selected_candidates, chat_history):
+    """
+    Complete the JD analysis with selected candidates
+    This is called after user selects candidates
+    """
+    try:
+        # Perform detailed analysis
+        response = analysis(job_description, selected_candidates, top_k=len(selected_candidates))
+        chat_history.append(("assistant", response))
+        return response, chat_history
+        
+    except Exception as e:
+        error_msg = f"Error in analysis: {str(e)}"
+        chat_history.append(("assistant", error_msg))
+        return error_msg, chat_history
+    
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

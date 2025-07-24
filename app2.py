@@ -3,11 +3,17 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from main import cv_parser_pipeline, create_vec_db, Resume_data, update_cached_resumes, initialize_collection, Jd_chatbot, normal_chatbot
+from main import cv_parser_pipeline, create_vec_db, Resume_data, update_cached_resumes, initialize_collection, normal_chatbot, complete_jd_analysis, get_top_candidates, analyze_selected_candidates
 
 SAVE_DIR = "Uploaded_Files"
 # Initialize global chat history as a list to maintain state
+global global_chat_history
 global_chat_history = []
+
+# Global variables for state management
+current_candidates = []
+current_job_description = ""
+jd_chat_state = {}
 
 def save_files(filepaths):
     """Process uploaded files with proper error handling"""
@@ -59,8 +65,10 @@ def save_files(filepaths):
         print(f"Error in save_files: {str(e)}")
         return f"Error processing files: {str(e)}"
 
-def process_files_and_job_description(filepaths, job_description, top_k):
-    """Process files and job description, then show results"""
+def process_files_and_job_description(filepaths, job_description):
+    """Process files and job description, then show candidates for selection"""
+    global current_candidates, current_job_description, jd_chat_state, global_chat_history
+    
     # Filter out None values and invalid paths
     valid_filepaths = [fp for fp in (filepaths or []) if fp is not None and os.path.isfile(fp)]
     
@@ -68,11 +76,12 @@ def process_files_and_job_description(filepaths, job_description, top_k):
         return (
             "No valid files selected. Please upload PDF, DOC, or DOCX files.",
             "",
+            gr.update(choices=[], value=[]),  # Fixed: Update CheckboxGroup properly
             gr.update(visible=False),   # Hide landing
             gr.update(visible=True),    # Show upload (stay on upload page)
+            gr.update(visible=False),   # Hide selection
             gr.update(visible=False),   # Hide results
             gr.update(visible=False),   # Hide chat
-            [],
             gr.update(value=None)       # Clear file input
         )
     
@@ -80,11 +89,12 @@ def process_files_and_job_description(filepaths, job_description, top_k):
         return (
             "Please enter a job description.",
             "",
+            gr.update(choices=[], value=[]),  # Fixed: Update CheckboxGroup properly
             gr.update(visible=False),   # Hide landing
             gr.update(visible=True),    # Show upload (stay on upload page)
+            gr.update(visible=False),   # Hide selection
             gr.update(visible=False),   # Hide results
             gr.update(visible=False),   # Hide chat
-            [],
             gr.update(value=None)       # Clear file input
         )
     
@@ -95,43 +105,132 @@ def process_files_and_job_description(filepaths, job_description, top_k):
         return (
             status,
             "",
+            gr.update(choices=[], value=[]),  # Fixed: Update CheckboxGroup properly
             gr.update(visible=False),   # Hide landing
             gr.update(visible=True),    # Show upload (stay on upload page)
+            gr.update(visible=False),   # Hide selection
             gr.update(visible=False),   # Hide results
             gr.update(visible=False),   # Hide chat
-            [],
             gr.update(value=None)       # Clear file input
         )
     
     try:
         # Reset global chat history for new analysis
-        global global_chat_history
         global_chat_history = []
         
-        # Process job description with the specified top_k
-        jd_results = Jd_chatbot(global_chat_history, job_description, top_k=top_k)
+        # Get initial candidates (using default top_k=10 to show more options)
+        candidates, display_text = get_top_candidates(job_description, top_k=10)
+        current_candidates = candidates
+        current_job_description = job_description
+        
+        # Create checkbox choices for candidate selection
+        candidate_choices = []
+        for idx, candidate in enumerate(candidates, 1):
+            name = candidate.get("name", "N/A")
+            exp_years = candidate.get("work_experience_years", "N/A")
+            skills = ", ".join(candidate.get("skills", [])[:3])  # Show first 3 skills
+            if len(candidate.get("skills", [])) > 3:
+                skills += "..."
+            choice_label = f"#{idx} - {name} ({exp_years} yrs) - {skills}"
+            candidate_choices.append(choice_label)
         
         return (
             status,
-            jd_results,
+            display_text,
+            gr.update(choices=candidate_choices, value=[]),  # Fixed: Update both choices and value
             gr.update(visible=False),   # Hide landing
             gr.update(visible=False),   # Hide upload
-            gr.update(visible=True),    # Show results
+            gr.update(visible=True),    # Show selection
+            gr.update(visible=False),   # Hide results
             gr.update(visible=False),   # Hide chat
-            [],
             gr.update(value=None)       # Clear file input
         )
+        
     except Exception as e:
         error_msg = f"Error processing job description: {str(e)}"
         return (
             error_msg,
             "",
+            gr.update(choices=[], value=[]),  # Fixed: Update CheckboxGroup properly
             gr.update(visible=False),   # Hide landing
             gr.update(visible=True),    # Show upload (stay on upload page)
+            gr.update(visible=False),   # Hide selection
             gr.update(visible=False),   # Hide results
             gr.update(visible=False),   # Hide chat
-            [],
             gr.update(value=None)       # Clear file input
+        )
+
+def analyze_candidates_with_selection(selected_candidates, top_k_final):
+    """Analyze selected candidates with final top_k"""
+    global current_candidates, current_job_description, global_chat_history
+    
+    if not selected_candidates:
+        return (
+            "Please select at least one candidate for analysis.",
+            gr.update(visible=False),   # Hide landing
+            gr.update(visible=False),   # Hide upload
+            gr.update(visible=True),    # Show selection (stay on selection page)
+            gr.update(visible=False),   # Hide results
+            gr.update(visible=False)    # Hide chat
+        )
+    
+    try:
+        # Extract candidate indices from selected labels
+        selected_indices = []
+        selected_candidate_objects = []
+        
+        for selected in selected_candidates:
+            # Extract the number from "#1 - Name..." format
+            try:
+                idx = int(selected.split(" - ")[0].replace("#", ""))
+                selected_indices.append(idx)
+                if 1 <= idx <= len(current_candidates):
+                    selected_candidate_objects.append(current_candidates[idx - 1])
+            except (ValueError, IndexError) as e:
+                print(f"Error parsing candidate selection: {selected}, Error: {e}")
+                continue
+        
+        if not selected_candidate_objects:
+            return (
+                "Error: Could not parse selected candidates. Please try again.",
+                gr.update(visible=False),   # Hide landing
+                gr.update(visible=False),   # Hide upload
+                gr.update(visible=True),    # Show selection (stay on selection page)
+                gr.update(visible=False),   # Hide results
+                gr.update(visible=False)    # Hide chat
+            )
+        
+        # Limit to top_k_final if specified
+        if top_k_final and top_k_final < len(selected_candidate_objects):
+            selected_candidate_objects = selected_candidate_objects[:top_k_final]
+            selected_indices = selected_indices[:top_k_final]
+        
+        # Analyze selected candidates
+        analysis_result = analyze_selected_candidates(
+            current_job_description, 
+            current_candidates, 
+            selected_indices
+        )
+        
+        return (
+            analysis_result,
+            gr.update(visible=False),   # Hide landing
+            gr.update(visible=False),   # Hide upload
+            gr.update(visible=False),   # Hide selection
+            gr.update(visible=True),    # Show results
+            gr.update(visible=False)    # Hide chat
+        )
+        
+    except Exception as e:
+        error_msg = f"Error analyzing candidates: {str(e)}"
+        print(f"Full error details: {e}")
+        return (
+            error_msg,
+            gr.update(visible=False),   # Hide landing
+            gr.update(visible=False),   # Hide upload
+            gr.update(visible=True),    # Show selection (stay on selection page)
+            gr.update(visible=False),   # Hide results
+            gr.update(visible=False)    # Hide chat
         )
 
 def go_to_chat():
@@ -139,6 +238,7 @@ def go_to_chat():
     return (
         gr.update(visible=False),   # Hide landing
         gr.update(visible=False),   # Hide upload
+        gr.update(visible=False),   # Hide selection
         gr.update(visible=False),   # Hide results
         gr.update(visible=True),    # Show chat
         []
@@ -185,6 +285,7 @@ def trigger_transition():
     return (
         gr.update(visible=False),   # Hide landing
         gr.update(visible=True),    # Show upload
+        gr.update(visible=False),   # Hide selection
         gr.update(visible=False),   # Hide results
         gr.update(visible=False),   # Hide chat
         [],
@@ -196,6 +297,7 @@ def go_back():
     return (
         gr.update(visible=True),    # Show landing
         gr.update(visible=False),   # Hide upload
+        gr.update(visible=False),   # Hide selection
         gr.update(visible=False),   # Hide results
         gr.update(visible=False),   # Hide chat
         [],
@@ -204,16 +306,27 @@ def go_back():
 
 def restart():
     """Restart application"""
-    global global_chat_history
+    global global_chat_history, current_candidates, current_job_description
     global_chat_history = []
+    current_candidates = []
+    current_job_description = ""
     return (
         gr.update(visible=True),    # Show landing
         gr.update(visible=False),   # Hide upload
+        gr.update(visible=False),   # Hide selection
         gr.update(visible=False),   # Hide results
         gr.update(visible=False),   # Hide chat
         [],
         ""
     )
+
+def select_all_candidates(current_choices):
+    """Select all available candidates"""
+    return current_choices
+
+def clear_selection():
+    """Clear all candidate selections"""
+    return []
 
 # Premium minimalistic CSS (enhanced with new styles)
 premium_css = """
@@ -454,6 +567,24 @@ body, .gradio-container {
     background: #f5f5f5 !important;
 }
 
+/* Selection helpers */
+.selection-btn {
+    background: #f8f9fa !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 25px !important;
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    margin: 0 4px !important;
+}
+
+.selection-btn:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+}
+
 /* Results Page */
 .results-container {
     max-width: 800px;
@@ -493,6 +624,17 @@ body, .gradio-container {
     margin-bottom: 2rem;
     padding-bottom: 2rem;
     border-bottom: 1px solid #eee;
+}
+
+/* Checkbox Group Styling */
+.checkbox-group {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
 }
 
 /* Status Messages */
@@ -603,16 +745,6 @@ with gr.Blocks(
             elem_classes="job-description-area"
         )
         
-        top_k_slider = gr.Slider(
-            minimum=1,
-            maximum=20,
-            value=5,
-            step=1,
-            label="Number of Top Candidates",
-            info="Select how many top candidates to filter and analyze",
-            elem_classes="top-k-slider"
-        )
-        
         with gr.Row():
             back_btn = gr.Button("← Back", elem_classes="secondary-btn")
             process_btn = gr.Button("Analyze Candidates", elem_classes="primary-btn")
@@ -623,6 +755,50 @@ with gr.Blocks(
             visible=True,
             value=""
         )
+    
+    # Candidate Selection Page
+    with gr.Column(visible=False, elem_classes="page-transition") as selection_page:
+        gr.HTML("""
+            <div class="upload-container">
+                <h2 class="section-title">Select Candidates</h2>
+                <p class="section-subtitle">
+                    Choose candidates you want to analyze and set final top_k
+                </p>
+            </div>
+        """)
+        
+        candidates_display = gr.Textbox(
+            label="Available Candidates",
+            interactive=False,
+            lines=15,
+            elem_classes="results-box"
+        )
+        
+        # Selection helper buttons
+        with gr.Row():
+            select_all_btn = gr.Button("Select All", elem_classes="selection-btn")
+            clear_selection_btn = gr.Button("Clear Selection", elem_classes="selection-btn")
+        
+        candidate_checkboxes = gr.CheckboxGroup(
+            label="Select Candidates for Analysis",
+            choices=[],
+            value=[],
+            elem_classes="checkbox-group"
+        )
+        
+        top_k_final_slider = gr.Slider(
+            minimum=1,
+            maximum=10,
+            value=5,
+            step=1,
+            label="Final Top K Candidates",
+            info="Select how many of the selected candidates to analyze",
+            elem_classes="top-k-slider"
+        )
+        
+        with gr.Row():
+            back_to_upload_btn = gr.Button("← Back to Upload", elem_classes="secondary-btn")
+            analyze_selected_btn = gr.Button("Analyze Selected", elem_classes="primary-btn")
     
     # Results Page
     with gr.Column(visible=False, elem_classes="page-transition") as results_page:
@@ -643,7 +819,7 @@ with gr.Blocks(
         )
         
         with gr.Row():
-            back_to_upload_btn = gr.Button("← Back to Upload", elem_classes="secondary-btn")
+            back_to_upload_btn2 = gr.Button("← Back to Upload", elem_classes="secondary-btn")
             go_to_chat_btn = gr.Button("Continue to Chat", elem_classes="primary-btn")
     
     # Chat Page
@@ -703,31 +879,56 @@ with gr.Blocks(
     start_button.click(
         fn=trigger_transition,
         inputs=[],
-        outputs=[landing_page, upload_page, results_page, chat_page, chatbot_interface, status_output]
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, chatbot_interface, status_output]
     )
     
     process_btn.click(
         fn=process_files_and_job_description,
-        inputs=[file_input, job_description_input, top_k_slider],
-        outputs=[status_output, results_output, landing_page, upload_page, results_page, chat_page, chatbot_interface, file_input]
+        inputs=[file_input, job_description_input],
+        outputs=[status_output, candidates_display, candidate_checkboxes, landing_page, upload_page, selection_page, results_page, chat_page, file_input]
+    )
+    
+    # Selection helper functions
+    select_all_btn.click(
+        fn=select_all_candidates,
+        inputs=[candidate_checkboxes],
+        outputs=[candidate_checkboxes]
+    )
+    
+    clear_selection_btn.click(
+        fn=clear_selection,
+        inputs=[],
+        outputs=[candidate_checkboxes]
+    )
+    
+    analyze_selected_btn.click(
+        fn=analyze_candidates_with_selection,
+        inputs=[candidate_checkboxes, top_k_final_slider],
+        outputs=[results_output, landing_page, upload_page, selection_page, results_page, chat_page]
     )
     
     back_btn.click(
         fn=go_back,
         inputs=[],
-        outputs=[landing_page, upload_page, results_page, chat_page, chatbot_interface, status_output]
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, chatbot_interface, status_output]
     )
     
     back_to_upload_btn.click(
-        fn=lambda: (gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), [], ""),
+        fn=lambda: (gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), "", gr.update(choices=[], value=[])),
         inputs=[],
-        outputs=[landing_page, upload_page, results_page, chat_page, chatbot_interface, status_output]
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, status_output, candidate_checkboxes]
+    )
+    
+    back_to_upload_btn2.click(
+        fn=lambda: (gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), "", gr.update(choices=[], value=[])),
+        inputs=[],
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, status_output, candidate_checkboxes]
     )
     
     go_to_chat_btn.click(
         fn=go_to_chat,
         inputs=[],
-        outputs=[landing_page, upload_page, results_page, chat_page, chatbot_interface]
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, chatbot_interface]
     )
     
     send_btn.click(
@@ -749,15 +950,15 @@ with gr.Blocks(
     )
     
     new_upload_btn.click(
-        fn=lambda: (gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), [], ""),
+        fn=lambda: (gr.update(visible=False), gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), "", gr.update(choices=[], value=[])),
         inputs=[],
-        outputs=[landing_page, upload_page, results_page, chat_page, chatbot_interface, status_output]
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, status_output, candidate_checkboxes]
     )
     
     restart_btn.click(
         fn=restart,
         inputs=[],
-        outputs=[landing_page, upload_page, results_page, chat_page, chatbot_interface, status_output]
+        outputs=[landing_page, upload_page, selection_page, results_page, chat_page, chatbot_interface, status_output]
     )
 
 if __name__ == "__main__":
