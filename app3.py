@@ -7,8 +7,8 @@ from typing import List, Dict, Any
 import tempfile
 import shutil
 from datetime import datetime
+import time
 
-# Import backend functions
 from main import (
     cv_parser_pipeline, 
     initialize_collection, 
@@ -20,96 +20,12 @@ from main import (
     filter_selected_candidates
 )
 
-# Page configuration
 st.set_page_config(
     page_title="AI Resume Screener",
     page_icon="🎯",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# Custom CSS for modern UI
-st.markdown("""
-<style>
-    .main-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 10px;
-        color: white;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-left: 4px solid #667eea;
-        margin-bottom: 1rem;
-    }
-    
-    .candidate-card {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
-        margin-bottom: 0.5rem;
-    }
-    
-    .chat-message {
-        padding: 1rem;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-    }
-    
-    .user-message {
-        background: #e3f2fd;
-        border-left: 4px solid #2196f3;
-    }
-    
-    .assistant-message {
-        background: #f3e5f5;
-        border-left: 4px solid #9c27b0;
-    }
-    
-    .sidebar-section {
-        background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-    }
-    
-    .success-box {
-        background: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-        padding: 1rem;
-        border-radius: 5px;
-        margin: 1rem 0;
-    }
-    
-    .error-box {
-        background: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        padding: 1rem;
-        border-radius: 5px;
-        margin: 1rem 0;
-    }
-    
-    .info-box {
-        background: #d1ecf1;
-        border: 1px solid #bee5eb;
-        color: #0c5460;
-        padding: 1rem;
-        border-radius: 5px;
-        margin: 1rem 0;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Initialize session state
 def initialize_session_state():
     if 'current_page' not in st.session_state:
         st.session_state.current_page = 'upload'
@@ -127,197 +43,88 @@ def initialize_session_state():
         st.session_state.chat_history = []
     if 'processing_complete' not in st.session_state:
         st.session_state.processing_complete = False
+    if 'auto_transition' not in st.session_state:
+        st.session_state.auto_transition = True
+    if 'analysis_shown_in_chat' not in st.session_state:
+        st.session_state.analysis_shown_in_chat = False
+    if 'chat_input_key' not in st.session_state:
+        st.session_state.chat_input_key = 0
 
-# Sidebar navigation
-def render_sidebar():
-    st.sidebar.markdown("""
-    <div class="sidebar-section">
-        <h3>🎯 AI Resume Screener</h3>
-        <p>Intelligent candidate analysis powered by AI</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Progress indicator
-    pages = ['upload', 'job_description', 'candidates', 'analysis', 'chat']
-    current_idx = pages.index(st.session_state.current_page)
-    
-    st.sidebar.markdown("### 📋 Progress")
-    for i, page in enumerate(pages):
-        icon = "✅" if i < current_idx else "🔄" if i == current_idx else "⏳"
-        status = "Completed" if i < current_idx else "Current" if i == current_idx else "Pending"
-        st.sidebar.markdown(f"{icon} **{page.replace('_', ' ').title()}** - {status}")
-    
-    st.sidebar.markdown("---")
-    
-    # Navigation buttons
-    st.sidebar.markdown("### 🧭 Navigation")
-    
-    col1, col2 = st.sidebar.columns(2)
-    
-    with col1:
-        if st.button("📁 Upload", use_container_width=True):
-            st.session_state.current_page = 'upload'
-            st.rerun()
-        
-        if st.button("👥 Candidates", use_container_width=True):
-            if st.session_state.candidates:
-                st.session_state.current_page = 'candidates'
-                st.rerun()
-    
-    with col2:
-        if st.button("📝 Job Desc", use_container_width=True):
-            if st.session_state.processing_complete:
-                st.session_state.current_page = 'job_description'
-                st.rerun()
-        
-        if st.button("💬 Chat", use_container_width=True):
-            st.session_state.current_page = 'chat'
-            st.rerun()
-    
-    if st.sidebar.button("📊 Analysis", use_container_width=True):
-        if st.session_state.analysis_result:
-            st.session_state.current_page = 'analysis'
-            st.rerun()
-    
-    # Statistics
-    if st.session_state.candidates:
-        st.sidebar.markdown("### 📊 Statistics")
-        st.sidebar.metric("Total Candidates", len(st.session_state.candidates))
-        if st.session_state.selected_candidates:
-            st.sidebar.metric("Selected", len(st.session_state.selected_candidates))
-        
-        # Show top skills
-        all_skills = []
-        for candidate in st.session_state.candidates:
-            all_skills.extend(candidate.get('skills', []))
-        
-        if all_skills:
-            skill_counts = {}
-            for skill in all_skills:
-                skill_counts[skill] = skill_counts.get(skill, 0) + 1
-            
-            top_skills = sorted(skill_counts.items(), key=lambda x: x[1], reverse=True)[:5]
-            
-            st.sidebar.markdown("**Top Skills:**")
-            for skill, count in top_skills:
-                st.sidebar.markdown(f"• {skill} ({count})")
 
 # Upload page
 def render_upload_page():
-    st.markdown("""
-    <div class="main-header">
-        <h1>📁 Upload Resume Files</h1>
-        <p>Upload PDF resume files for AI-powered analysis</p>
-    </div>
-    """, unsafe_allow_html=True)
     
-    # File uploader
-    uploaded_files = st.file_uploader(
-        "Choose PDF files",
-        type=['pdf'],
-        accept_multiple_files=True,
-        help="Upload multiple PDF resume files for batch processing"
-    )
+    uploaded_files = st.file_uploader("Choose PDF files",type=['pdf'],accept_multiple_files=True,help="Upload multiple PDF resume files for batch processing")
     
     if uploaded_files:
         st.session_state.uploaded_files = uploaded_files
-        
-        # Display uploaded files
-        st.markdown("### 📋 Uploaded Files")
-        for i, file in enumerate(uploaded_files, 1):
-            st.markdown(f"""
-            <div class="candidate-card">
-                <strong>{i}. {file.name}</strong><br>
-                Size: {file.size / 1024:.1f} KB
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Process button
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("🚀 Process Resumes", use_container_width=True, type="primary"):
+            if st.button("Process Resumes", use_container_width=True, type="primary"):
                 process_resumes(uploaded_files)
 
 def process_resumes(uploaded_files):
-    """Process uploaded resume files"""
-    with st.spinner("Processing resumes... This may take a few minutes."):
-        try:
-            # Create temporary directory
-            temp_dir = tempfile.mkdtemp()
-            
-            # Save uploaded files
-            file_paths = []
-            for file in uploaded_files:
-                file_path = os.path.join(temp_dir, file.name)
-                with open(file_path, 'wb') as f:
-                    f.write(file.getbuffer())
-                file_paths.append(file_path)
-            
-            # Initialize vector database
-            progress_bar = st.progress(0)
-            st.info("Initializing vector database...")
-            initialize_collection()
-            progress_bar.progress(20)
-            
-            # Parse resumes
-            st.info("Parsing resumes with AI...")
-            candidates = cv_parser_pipeline(temp_dir)
-            progress_bar.progress(60)
-            
-            # Create vector database
-            st.info("Creating vector embeddings...")
-            create_vec_db(candidates)
-            progress_bar.progress(80)
-            
-            # Update cached data
-            update_cached_resumes()
-            progress_bar.progress(100)
-            
-            # Clean up
-            shutil.rmtree(temp_dir)
-            
-            # Store results
-            st.session_state.candidates = candidates
-            st.session_state.processing_complete = True
-            
-            st.markdown(f"""
-            <div class="success-box">
-                <strong>✅ Processing Complete!</strong><br>
-                Successfully processed {len(candidates)} candidates.<br>
-                Vector database created with {len(candidates)} entries.
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Auto-navigate to job description
-            if st.button("Continue to Job Description →", type="primary"):
-                st.session_state.current_page = 'job_description'
-                st.rerun()
-                
-        except Exception as e:
-            st.markdown(f"""
-            <div class="error-box">
-                <strong>❌ Processing Failed</strong><br>
-                Error: {str(e)}
-            </div>
-            """, unsafe_allow_html=True)
+    
+    try:
+        save_dir = r"C:\Users\Azeem\Documents\CARE\Intelligent-Resume-Filtering\Uploaded_Files"
+
+        # Clear the folder first
+        if os.path.exists(save_dir):
+            shutil.rmtree(save_dir)
+        os.makedirs(save_dir, exist_ok=True)
+
+        # Save uploaded files
+        file_paths = []
+        for file in uploaded_files:
+            file_path = os.path.join(save_dir, file.name)
+            with open(file_path, 'wb') as f:
+                f.write(file.getbuffer())
+            file_paths.append(file_path)
+        initialize_collection()
+        candidates = cv_parser_pipeline(save_dir)
+        create_vec_db(candidates)
+        update_cached_resumes()
+        st.session_state.candidates = candidates
+        st.session_state.processing_complete = True
+        
+        st.markdown(f"""
+        <div class="status-success">
+            <h3>✅ Processing Complete!</h3>
+            <p>Successfully processed {len(candidates)} candidates</p>
+            <p>Automatically moving to job description...</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Auto-transition to job description
+        time.sleep(3)
+        st.session_state.current_page = 'job_description'
+        st.rerun()
+        
+    except Exception as e:
+        st.error(f"❌ Processing failed: {str(e)}")
 
 # Job Description page
 def render_job_description_page():
-    st.markdown("""
-    <div class="main-header">
-        <h1>📝 Job Description Analysis</h1>
-        <p>Enter job requirements to find matching candidates</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
+
     if not st.session_state.processing_complete:
         st.markdown("""
-        <div class="info-box">
-            <strong>ℹ️ Upload Required</strong><br>
-            Please upload and process resume files first.
+        <div class="status-info">
+            <h3>ℹ️ Upload Required</h3>
+            <p>Please upload and process resume files first.</p>
         </div>
         """, unsafe_allow_html=True)
+        
+        if st.button("← Back to Upload", type="secondary"):
+            st.session_state.current_page = 'upload'
+            st.rerun()
         return
+    
+    st.markdown("""
+    <div class="main-card">
+        <h1 style="text-align: center; color: #333;">📝 Job Description Analysis</h1>
+        <p style="text-align: center; color: #666;">Enter job requirements to find matching candidates</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Job description input
     job_description = st.text_area(
@@ -334,215 +141,309 @@ Include:
         value=st.session_state.job_description
     )
     
-    # Settings
-    col1, col2 = st.columns(2)
+    # Settings in a clean layout
+    col1, col2 = st.columns([1, 1])
     with col1:
-        top_k = st.slider("Number of candidates to find", 5, 20, 10)
-    
-    with col2:
-        st.markdown("### 💡 Tips")
-        st.markdown("""
-        - Be specific about technical skills
-        - Include minimum experience requirements
-        - Mention educational preferences
-        - Describe role responsibilities clearly
-        """)
+        top_k = st.slider("Number of candidates to find", 5, 50, 10)
     
     # Analyze button
-    if st.button("🔍 Find Matching Candidates", type="primary", use_container_width=True):
-        if job_description.strip():
-            analyze_job_description(job_description, top_k)
-        else:
-            st.error("Please enter a job description")
-
-def analyze_job_description(job_description, top_k):
-    """Analyze job description and find candidates"""
-    with st.spinner("Analyzing job description and finding candidates..."):
-        try:
-            result = jd_analysis_pipeline(
-                chat_history=st.session_state.chat_history,
-                user_prompt=job_description,
-                top_k=top_k
-            )
-
-            if result["stage"] == "selection":
-                st.session_state.candidates = result["candidates"]
-                st.session_state.job_description = job_description
-                st.session_state.chat_history = result["chat_history"]  # unified
-
-                st.markdown(f"""
-                <div class="success-box">
-                    <strong>✅ Analysis Complete!</strong><br>
-                    Found {len(result["candidates"])} matching candidates.
-                </div>
-                """, unsafe_allow_html=True)
-
-                st.session_state.current_page = 'candidates'
-                st.rerun()
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🔍 Find Matching Candidates", type="primary", use_container_width=True):
+            if job_description.strip():
+                analyze_job_description(job_description, top_k)
             else:
-                st.error(f"Analysis failed: {result.get('response', 'Unknown error')}")
-
-        except Exception as e:
-            st.error(f"Error analyzing job description: {str(e)}")
+                st.error("Please enter a job description")
 
 
-def render_candidates_page():
-    st.markdown("""
-    <div class="main-header">
-        <h1>👥 Candidate Selection</h1>
-        <p>Review and select candidates for detailed analysis</p>
+
+
+##helper main function to run analysis pipeline
+def run_analysis_pipeline(job_description, top_k=5, selected_indexes=None, all_candidates=None, mode="selection"):
+    """Unified function to run both initial and selected candidate analysis."""
+    st.markdown(f"""
+    <div class="status-processing">
+        <h3>🔍 Analyzing {'Selected Candidates' if mode == 'analysis' else 'Job Description'}</h3>
+        <p>{'Generating detailed analysis...' if mode == 'analysis' else 'Finding the best matching candidates...'}</p>
     </div>
     """, unsafe_allow_html=True)
 
-    if not st.session_state.candidates:
-        st.warning("ℹ️ No candidates found. Please upload resumes and complete job description analysis.")
-        return
+    progress_bar = st.progress(0)
+    
+    try:
+        progress_bar.progress(30)
 
-    # Display candidate stats
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Total Candidates", len(st.session_state.candidates))
-    with col2:
-        avg_exp = sum(c.get('work_experience_years', 0) or 0 for c in st.session_state.candidates) / len(st.session_state.candidates)
-        st.metric("Avg Experience", f"{avg_exp:.1f} years")
-    with col3:
-        st.metric("Selected", len(st.session_state.selected_candidates))
+        result = jd_analysis_pipeline(
+            chat_history=st.session_state.chat_history,
+            user_prompt=job_description,
+            selected_indexes=selected_indexes,
+            all_candidates=all_candidates,
+            top_k=top_k
+        )
 
-    st.markdown("---")
-    st.markdown("### 🎯 Selection Controls")
+        progress_bar.progress(100)
 
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        if st.button("Select All"):
-            st.session_state.selected_candidates = list(range(1, len(st.session_state.candidates) + 1))
-    with col2:
-        if st.button("Clear All"):
-            st.session_state.selected_candidates = []
-    with col3:
-        if st.button("Top 5"):
-            st.session_state.selected_candidates = list(range(1, min(6, len(st.session_state.candidates) + 1)))
-    with col4:
-        if st.button("Top 10"):
-            st.session_state.selected_candidates = list(range(1, min(11, len(st.session_state.candidates) + 1)))
-    with col5:
-        final_top_k = st.selectbox("Final Top K", [3, 5, 7, 10], index=1)
+        if result["stage"] == "selection":
+            st.session_state.candidates = result["candidates"]
+            st.session_state.job_description = job_description
+            st.session_state.chat_history = result["chat_history"]
 
-    st.markdown("### 📋 Candidate Table")
-
-    # Build table with checkboxes
-    table_data = []
-    for i, cand in enumerate(st.session_state.candidates, 1):
-        skills = cand.get("skills", [])
-        if isinstance(skills, list):
-            skills = ", ".join(str(s) for s in skills[:3])
-        elif isinstance(skills, str):
-            pass
-        else:
-            skills = "N/A"
-
-        edu = cand.get("education", [])
-        if isinstance(edu, list):
-            edu = ", ".join(str(e) for e in edu[:2])
-        elif isinstance(edu, str):
-            pass
-        else:
-            edu = "N/A"
-
-        row = {
-            "Select": i in st.session_state.selected_candidates,
-            "Rank": i,
-            "Name": str(cand.get("name", "Unknown")),
-            "Experience": f'{cand.get("work_experience_years", 0)} years',
-            "Score": f'{cand.get("score", 0.0):.3f}',
-            "Top Skills": skills,
-            "Education": edu
-        }
-        table_data.append(row)
-
-    df = pd.DataFrame(table_data)
-
-    edited_df = st.data_editor(
-        df,
-        column_config={
-            "Select": st.column_config.CheckboxColumn("Select", help="Include this candidate")
-        },
-        disabled=["Rank", "Name", "Experience", "Score", "Top Skills", "Education"],
-        hide_index=True,
-        use_container_width=True
-    )
-
-    # Update selected candidates from checkbox
-    st.session_state.selected_candidates = [
-        row["Rank"] for _, row in edited_df.iterrows() if row["Select"]
-    ]
-
-    # Display analysis button
-    if st.session_state.selected_candidates:
-        st.markdown("### ✅ Ready for Analysis")
-        if st.button("🔍 Analyze Selected Candidates", type="primary", use_container_width=True):
-            analyze_selected_candidates(final_top_k)
-    else:
-        st.info("Select at least one candidate to proceed with analysis.")
-
-
-def analyze_selected_candidates(final_top_k):
-    """Analyze selected candidates"""
-    with st.spinner("Analyzing selected candidates..."):
-        try:
-            selected_candidates = filter_selected_candidates(
-                st.session_state.candidates, 
-                st.session_state.selected_candidates
-            )
-
-            if final_top_k < len(selected_candidates):
-                selected_candidates = selected_candidates[:final_top_k]
-
-            analysis_result, updated_history = complete_jd_analysis(
-                st.session_state.job_description,
-                selected_candidates,
-                st.session_state.chat_history
-            )
-
-            st.session_state.analysis_result = analysis_result
-            st.session_state.chat_history = updated_history  # same history
-
-            st.markdown("""
-            <div class="success-box">
-                <strong>✅ Analysis Complete!</strong><br>
-                Detailed candidate analysis has been generated.
+            st.markdown(f"""
+            <div class="status-success">
+                <h3>✅ Analysis Complete!</h3>
+                <p>Found {len(result["candidates"])} matching candidates</p>
+                <p>Moving to candidate selection...</p>
             </div>
             """, unsafe_allow_html=True)
 
+            time.sleep(2)
+            st.session_state.current_page = 'candidates'
+            st.rerun()
+
+        elif result["stage"] == "analysis":
+            st.session_state.analysis_result = result["response"]
+            st.session_state.chat_history = result["chat_history"]
+            st.session_state.analysis_shown_in_chat = True
+
+            st.markdown("""
+            <div class="status-success">
+                <h3>✅ Analysis Complete!</h3>
+                <p>Detailed candidate analysis has been generated</p>
+                <p>Moving to analysis results...</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            time.sleep(2)
             st.session_state.current_page = 'analysis'
             st.rerun()
 
-        except Exception as e:
-            st.error(f"Error analyzing candidates: {str(e)}")
+        else:
+            st.error(f"Analysis failed: {result.get('response', 'Unknown error')}")
 
+    except Exception as e:
+        st.error(f"Error during analysis: {str(e)}")
+
+
+
+
+def analyze_job_description(job_description, top_k):
+    run_analysis_pipeline(job_description=job_description, top_k=top_k, mode="selection")
+
+
+
+
+
+# def analyze_job_description(job_description, top_k):
+#     """Analyze job description and find candidates with auto-transition"""
+    
+#     st.markdown("""
+#     <div class="status-processing">
+#         <h3>🔍 Analyzing Job Description</h3>
+#         <p>Finding the best matching candidates...</p>
+#     </div>
+#     """, unsafe_allow_html=True)
+    
+#     progress_bar = st.progress(0)
+    
+#     try:
+#         progress_bar.progress(30)
+#         result = jd_analysis_pipeline(
+#             chat_history=st.session_state.chat_history,
+#             user_prompt=job_description,
+#             top_k=top_k
+#         )
+#         progress_bar.progress(100)
+
+#         if result["stage"] == "selection":
+#             st.session_state.candidates = result["candidates"]
+#             st.session_state.job_description = job_description
+#             st.session_state.chat_history = result["chat_history"]
+
+#             st.markdown(f"""
+#             <div class="status-success">
+#                 <h3>✅ Analysis Complete!</h3>
+#                 <p>Found {len(result["candidates"])} matching candidates</p>
+#                 <p>Moving to candidate selection...</p>
+#             </div>
+#             """, unsafe_allow_html=True)
+#             time.sleep(2)
+#             st.session_state.current_page = 'candidates'
+#             st.rerun()
+#         else:
+#             st.error(f"Analysis failed: {result.get('response', 'Unknown error')}")
+
+#     except Exception as e:
+#         st.error(f"Error analyzing job description: {str(e)}")
+
+def get_candidates_df():
+    data = []
+    for idx, c in enumerate(st.session_state.candidates, start=1):
+        data.append({
+            "ID": idx,
+            "Name": c.get("name", "N/A"),
+            "Experience (years)": c.get("work_experience_years", 0),
+            "Skills": ", ".join(c.get("skills", [])),
+            "Score": c.get("score", "N/A"),
+            "Selected": idx in st.session_state.selected_candidates
+        })
+    return pd.DataFrame(data)
+
+
+def render_candidates_page():
+    import pandas as pd
+    import streamlit as st
+
+    if not st.session_state.candidates:
+        st.warning("No candidates found. Please complete job description analysis first.")
+        return
+
+    def flatten_and_stringify(data, max_items=3):
+        if data is None:
+            return "N/A"
+        if isinstance(data, str):
+            return data
+        if isinstance(data, dict):
+            return ", ".join(f"{k}: {v}" for k, v in list(data.items())[:max_items])
+        if isinstance(data, (list, tuple, set)):
+            return ", ".join(str(item) for item in list(data)[:max_items]) or "N/A"
+        return str(data)
+
+    if 'selected_candidates' not in st.session_state:
+        st.session_state.selected_candidates = []
+    data = []
+    for i, c in enumerate(st.session_state.candidates, 1):
+        data.append({
+            "ID": i,
+            "Name": flatten_and_stringify(c.get("name")),
+            "Experience": c.get("work_experience_years", "N/A"),
+            "Skills": flatten_and_stringify(c.get("skills")),
+            "Education": flatten_and_stringify(c.get("education")),
+            "Score": c.get("score", "N/A"),
+            "Selected": False  # Default to not selected
+        })
+
+    sort_options = {
+        "🔼 Experience (Low → High)": ("Experience", True),
+        "🔽 Experience (High → Low)": ("Experience", False),
+        "🔼 Score (Low → High)": ("Score", True),
+        "🔽 Score (High → Low)": ("Score", False),
+        "🔼 Name (A → Z)": ("Name", True),
+        "🔽 Name (Z → A)": ("Name", False),
+        "🔼 ID (Low → High)": ("ID", True),
+        "🔽 ID (High → Low)": ("ID", False),
+    }
+
+    sort_choice = st.selectbox("📊 Sort Candidates By", list(sort_options.keys()))
+    sort_by, sort_asc = sort_options[sort_choice]
+
+    df = pd.DataFrame(data)
+    df = df.sort_values(by=sort_by, ascending=sort_asc)
+
+    edited_df = st.data_editor(
+        df)
+
+
+    # Just update the selected candidate IDs for now
+    st.session_state.selected_candidates = [
+        row["ID"] for _, row in edited_df.iterrows() if row["Selected"]
+    ]
+
+    if st.session_state.selected_candidates:
+        st.markdown("Ready for Analysis")
+        st.success(f"Selected {len(st.session_state.selected_candidates)} candidates: {', '.join(map(str, st.session_state.selected_candidates))}")
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🔍 Analyze Selected Candidates", type="primary", use_container_width=True):
+                updated_candidates = []
+                for i, c in enumerate(st.session_state.candidates):
+                    selected = (i + 1) in st.session_state.selected_candidates
+                    updated_candidates.append({**c, "selected": selected})
+                st.session_state.candidates = updated_candidates
+
+                analyze_selected_candidates(len(st.session_state.selected_candidates))
+    else:
+        st.info("Select at least one candidate to proceed with analysis.")
+
+def analyze_selected_candidates(final_top_k=5):
+    selected_candidates = filter_selected_candidates(
+        st.session_state.candidates, 
+        st.session_state.selected_candidates
+    )
+    selected_indexes = st.session_state.selected_candidates
+
+    if final_top_k < len(selected_candidates):
+        selected_candidates = selected_candidates[:final_top_k]
+
+    run_analysis_pipeline(
+        job_description=st.session_state.job_description,
+        top_k=final_top_k,
+        selected_indexes=selected_indexes,
+        all_candidates=st.session_state.candidates,
+        mode="analysis"
+    )
+
+# def analyze_selected_candidates(final_top_k=5):
+#     """Analyze selected candidates with auto-transition"""
+    
+#     st.markdown("""
+#     <div class="status-processing">
+#         <h3>🔍 Analyzing Selected Candidates</h3>
+#         <p>Generating detailed analysis...</p>
+#     </div>
+#     """, unsafe_allow_html=True)
+    
+#     progress_bar = st.progress(0)
+    
+#     try:
+#         selected_candidates = filter_selected_candidates(
+#             st.session_state.candidates, 
+#             st.session_state.selected_candidates
+#         )
+#         progress_bar.progress(30)
+
+#         if final_top_k < len(selected_candidates):
+#             selected_candidates = selected_candidates[:final_top_k]
+#         progress_bar.progress(60)
+
+#         result = jd_analysis_pipeline(
+#         chat_history=st.session_state.chat_history,
+#         user_prompt=st.session_state.job_description,
+#         selected_indexes=selected_candidates,
+#         all_candidates=st.session_state.candidates,
+#         top_k= final_top_k
+#             )
+
+#         analysis_result = result["response"]
+#         updated_history = result["chat_history"]
+
+#         progress_bar.progress(100)
+
+#         st.session_state.analysis_result = analysis_result
+#         st.session_state.chat_history = updated_history
+#         # Mark that analysis has been shown in chat history
+#         st.session_state.analysis_shown_in_chat = True
+
+#         st.markdown("""
+#         <div class="status-success">
+#             <h3>✅ Analysis Complete!</h3>
+#             <p>Detailed candidate analysis has been generated</p>
+#             <p>Moving to analysis results...</p>
+#         </div>
+#         """, unsafe_allow_html=True)
+
+#         # Auto-transition to analysis
+#         time.sleep(2)
+#         st.session_state.current_page = 'analysis'
+#         st.rerun()
+
+#     except Exception as e:
+#         st.error(f"Error analyzing candidates: {str(e)}")
 
 # Analysis page
 def render_analysis_page():
-    st.markdown("""
-    <div class="main-header">
-        <h1>📊 Analysis Results</h1>
-        <p>Detailed AI-powered candidate analysis</p>
-    </div>
-    """, unsafe_allow_html=True)
     
-    if not st.session_state.analysis_result:
-        st.markdown("""
-        <div class="info-box">
-            <strong>ℹ️ No Analysis Available</strong><br>
-            Please select and analyze candidates first.
-        </div>
-        """, unsafe_allow_html=True)
-        return
-    
-    # Display analysis result
-    st.markdown("### 📋 Detailed Analysis")
-    st.markdown(st.session_state.analysis_result)
-    
-    # Action buttons
+
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -551,72 +452,54 @@ def render_analysis_page():
             st.rerun()
     
     with col2:
-        if st.button("📥 Download Analysis", use_container_width=True):
-            # Create downloadable content
-            content = f"""# Candidate Analysis Report
+        # Download functionality
+        content = f"""# Candidate Analysis Report
 Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ## Job Description
 {st.session_state.job_description}
 
 ## Analysis Results
-{st.session_state.analysis_result}
+{st.markdown(st.session_state.analysis_result or "_No analysis result available yet._")}
 """
-            st.download_button(
-                label="Download as Markdown",
-                data=content,
-                file_name=f"candidate_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
-                mime="text/markdown"
-            )
+        st.download_button(
+            label="📥 Download Analysis",
+            data=content,
+            file_name=f"candidate_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+            mime="text/markdown",
+            use_container_width=True
+        )
     
     with col3:
         if st.button("🔄 New Analysis", use_container_width=True):
-            # Reset for new analysis
             st.session_state.current_page = 'job_description'
             st.session_state.selected_candidates = []
             st.session_state.analysis_result = ""
+            st.session_state.analysis_shown_in_chat = False
             st.rerun()
 
 # Chat page
 def render_chat_page():
-    st.markdown("""
-    <div class="main-header">
-        <h1>💬 AI Assistant</h1>
-        <p>Ask questions about candidates and get insights</p>
-    </div>
-    """, unsafe_allow_html=True)
+    display_history = []
 
-    current_history = st.session_state.chat_history
+    # Only show new messages that are added after reaching the chat page
+    # This ensures a clean chat interface without showing backend conversation history
+    if 'chat_display_history' not in st.session_state:
+        st.session_state.chat_display_history = []
 
-    st.markdown("### 💭 Conversation")
-    with st.container():
-        if not current_history:
-            st.markdown("""
-            <div class="info-box">
-                <strong>👋 Welcome to AI Assistant!</strong><br>
-                Ask me anything about the candidates or job requirements.
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            for role, message in current_history:
-                if role == "user":
-                    st.markdown(f"""
-                    <div class="chat-message user-message">
-                        <strong>You:</strong><br>
-                        {message}
-                    </div>
-                    """, unsafe_allow_html=True)
-                elif role == "assistant":
-                    st.markdown(f"""
-                    <div class="chat-message assistant-message">
-                        <strong>AI Assistant:</strong><br>
-                        {message}
-                    </div>
-                    """, unsafe_allow_html=True)
+    display_history = st.session_state.chat_display_history
 
-    # Suggested questions
-    if not current_history:
-        st.markdown("**💡 Try asking:**")
+    # Chat history display
+    if not display_history:
+        st.markdown("""
+        <div class="status-info">
+            <h3>👋 Welcome to AI Assistant!</h3>
+            <p>Ask me anything about the candidates or job requirements.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Suggested questions
+        st.markdown("### 💡 Try asking:")
         suggestions = [
             "Which candidate has the most Python experience?",
             "Compare the top 3 candidates",
@@ -625,17 +508,35 @@ def render_chat_page():
             "Which candidate would be best for a senior role?"
         ]
 
-        cols = st.columns(len(suggestions))
-        for i, suggestion in enumerate(suggestions):
-            with cols[i]:
-                if st.button(suggestion, key=f"suggestion_{i}", use_container_width=True):
-                    process_chat_message(suggestion)
+        for suggestion in suggestions:
+            if st.button(suggestion, key=f"suggestion_{suggestion}", use_container_width=True):
+                process_chat_message(suggestion)
+    else:
+        # Display chat history
+        st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+        for role, message in display_history:
+            if role == "user":
+                st.markdown(f"""
+                <div class="chat-message user-message">
+                    <strong>You:</strong><br>
+                    {message}
+                </div>
+                """, unsafe_allow_html=True)
+            elif role == "assistant":
+                st.markdown(f"""
+                <div class="chat-message assistant-message">
+                    <strong>AI Assistant:</strong><br>
+                    {message}
+                </div>
+                """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # Input box
+    st.markdown(" Ask a Question")
     user_input = st.text_area(
         "Your question:",
         height=100,
-        placeholder="Ask about candidate skills, experience, comparisons, or recommendations..."
+        placeholder="Ask about candidate skills, experience, comparisons, or recommendations...",
+        key=f"chat_input_{st.session_state.chat_input_key}"
     )
 
     col1, col2 = st.columns([3, 1])
@@ -648,26 +549,35 @@ def render_chat_page():
 
     with col2:
         if st.button("Clear Chat", use_container_width=True):
-            st.session_state.chat_history = []
+            st.session_state.chat_display_history = []
+            st.session_state.chat_input_key += 1
             st.rerun()
-
 
 def process_chat_message(user_input):
-    """Send message to unified chatbot"""
-    with st.spinner("Thinking..."):
-        try:
-            st.session_state.chat_history.append(("user", user_input))
-            response = normal_chatbot(st.session_state.chat_history, user_input)
-            st.session_state.chat_history.append(("assistant", response))
-            st.rerun()
-        except Exception as e:
-            st.error(f"Error processing message: {str(e)}")
-
+    """Send message to chatbot without duplicating messages"""
+    try:
+        temp_history = st.session_state.chat_history.copy()
+        temp_history.append(("user", user_input))
+        
+        with st.spinner("AI is thinking..."):
+            response = normal_chatbot(temp_history, user_input)
+        st.session_state.chat_history.append(("user", user_input))
+        st.session_state.chat_history.append(("assistant", response))
+        
+        if 'chat_display_history' not in st.session_state:
+            st.session_state.chat_display_history = []
+        st.session_state.chat_display_history.append(("user", user_input))
+        st.session_state.chat_display_history.append(("assistant", response))
+        st.session_state.chat_input_key += 1
+        
+        st.rerun()
+        
+    except Exception as e:
+        st.error(f"Error processing message: {str(e)}")
 
 # Main app
 def main():
     initialize_session_state()
-    render_sidebar()
     
     # Route to appropriate page
     if st.session_state.current_page == 'upload':

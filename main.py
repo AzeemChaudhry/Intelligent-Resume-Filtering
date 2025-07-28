@@ -12,8 +12,11 @@ from collections import defaultdict
 from datetime import datetime
 import pytesseract
 from pdf2image import convert_from_path
+import re
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 current_date_str = datetime.today().strftime("%d %b %Y") 
+
+base_url = "http://172.16.2.214:8000/v1"
 
 #---------------------------------------------------------------------
 class ResumeInfo(BaseModel):
@@ -28,7 +31,7 @@ class ResumeInfo(BaseModel):
 #---------------------------------------------------------------------
 def pdf_to_text(pdf_path: str) -> str:
     try:
-        pages = convert_from_path(pdf_path, dpi=300)
+        pages = convert_from_path(pdf_path, dpi=200)
         extracted_text = []
         for i, page in enumerate(pages):
             text = pytesseract.image_to_string(page, lang='eng', config='--psm 3')
@@ -47,7 +50,7 @@ def get_json_schema():
 #---------------------------------------------------------------------
 def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
     try:
-        client = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        client = OpenAI(base_url=base_url, api_key="-")
         response = client.chat.completions.create(
             model="Qwen/Qwen2.5-32B-Instruct-AWQ",
             messages=[{"role": "user", "content": prompt}],
@@ -106,6 +109,7 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     Each entry must include:
     - `company_name` (string)  
     - `job_title` (string)  
+    - 'job location' (string)
     - `duration_start` (format: "DD/MM/YYYY")  
     - `duration_end` (format: "DD/MM/YYYY")
 
@@ -357,14 +361,16 @@ Analyze the candidates with respect to the job description and:
 """
     
     try:
-        client_llm = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        client_llm = OpenAI(base_url=base_url, api_key="-")
         response = client_llm.chat.completions.create(
             model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-            messages=[{"role": "system", "content": system_prompt}]
+            messages=[{"role": "user", "content": system_prompt},
+            ]
         )
         return response.choices[0].message.content
     except Exception as e:
         return f"Error in analysis: {str(e)}"
+
 
 #---------------------------------------------------------------------------------------------
 def Resume_data():
@@ -508,7 +514,7 @@ def filter_selected_candidates(all_candidates: List[dict], selected_indexes: Lis
 def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_candidates=None, top_k=5):
     global cached_resume_data
     try:
-        client_llm = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        client_llm = OpenAI(base_url=base_url, api_key="-")
 
         chat_history.append(("user", user_prompt))
         full_text = "\n".join(f"{r}: {m}" for r, m in chat_history)
@@ -581,7 +587,7 @@ def normal_chatbot(chat_history, user_prompt):
     global cached_resume_data
 
     try:
-        client_llm = OpenAI(base_url="http://172.16.2.214:8000/v1", api_key="-")
+        client_llm = OpenAI(base_url=base_url, api_key="-")
         resume_summary = summarize_resumes(cached_resume_data,client_llm)
         
         system_prompt = f"""
@@ -635,50 +641,6 @@ Do not break character under any circumstances.
     
     except Exception as e:
         return f"Error in chatbot: {str(e)}"
-
-#---------------------------------------------------------------------
-# def Jd_chatbot(chat_history, user_prompt, top_k=5): 
-#     global cached_resume_data
-#     print("\nAnalyzing Clients\n")
-#     try:
-#         client_llm = OpenAI(        
-#             base_url="http://172.16.2.214:8000/v1",
-#             api_key="-"
-#         )
-
-#         # Step 1: Truncate history if token limit exceeded
-#         full_text = "\n".join(f"{r}: {m}" for r, m in chat_history + [("user", user_prompt)])
-#         if estimate_tokens(full_text) > 3500:
-#             chat_history = summarize_history(chat_history, client_llm)
-#             chat_history = truncate_history(chat_history, "") 
-        
-#         chat_history.append(("user", user_prompt))
-        
-#         # Step 2: Parse job description and find candidates
-#         parsed = job_description_parser(user_prompt)
-#         scores = searching_Qdrant(parsed, top_k)
-#         top_candidates = sorting_candidates(scores)
-        
-#         # Step 3: Display candidates for selection
-#         candidates_display = display_all_candidates(top_candidates)
-        
-#         # Return candidates for selection (this will be handled by the UI)
-#         return {
-#             "candidates": top_candidates,
-#             "candidates_display": candidates_display,
-#             "chat_history": chat_history,
-#             "job_description": user_prompt
-#         }
-        
-#     except Exception as e:
-#         error_msg = f"Error in JD chatbot: {str(e)}"
-#         chat_history.append(("assistant", error_msg))
-#         return {
-#             "candidates": [],
-#             "candidates_display": error_msg,
-#             "chat_history": chat_history,
-#             "job_description": user_prompt
-#         }
 #---------------------------------------------------------------------
 def complete_jd_analysis(job_description, selected_candidates, chat_history):
     """
@@ -696,5 +658,64 @@ def complete_jd_analysis(job_description, selected_candidates, chat_history):
         chat_history.append(("assistant", error_msg))
         return error_msg, chat_history
     
+#---------------------------------------------------------------------
 
+## helper Function
+def string_cleanup(input_string: str) -> str:
+    cleaned = input_string.replace('\xa0', ' ')
+    cleaned = re.sub(r'\s+', ' ', cleaned)       
+    return cleaned.strip()
+
+
+## generates job description based on job title and small description
+#---------------------------------------------------------------------
+def job_description_generator(job_title:str, small_description:str) -> str:
+    """
+    Generate a job description based on the job title and a small description.
+    This function uses a simple template to create a structured job description.
+    """
+
+    job_title = string_cleanup(job_title)
+    small_description = string_cleanup(small_description)
+
+    ## checks 
+    if not job_title or not small_description:
+        raise ValueError("Job title and small description cannot be empty.")
+    if len(job_title) > 100:
+        raise ValueError("Job title is too long. Please keep it under 100 characters.")
+    if len(small_description) > 500:
+        raise ValueError("Small description is too long. Please keep it under 500 characters.")
+    if not re.match(r'^[A-Za-z0-9\s]+$', job_title):
+        raise ValueError("Job title contains invalid characters. Only alphanumeric and spaces are allowed.")
+    if not re.match(r'^[A-Za-z0-9\s,.!?-]+$', small_description):
+        raise ValueError("Small description contains invalid characters. Only alphanumeric, spaces, and basic punctuation are allowed.")
+    if len(job_title) < 3:
+        raise ValueError("Job title is too short. Please provide a more descriptive title.")
+    if len(small_description) < 10:
+        raise ValueError("Small description is too short. Please provide a more detailed description.")
+    
+
+    user_prompt = f"""You are a professional job description generator. Your task is to create a detailed job description based on the provided job title and a brief description.
+    ### Job Title
+    {job_title}
+    ### Small Description
+    {small_description}
+    ### Task
+    Generate a comprehensive job description that includes:
+    - Job Title
+    - Job Summary
+    - Key Responsibilities
+    - Required Skills
+    - Preferred Qualifications
+    - Work Experience
+    - Education Requirements
+    - Location
+    Ensure the description is clear, professional, and suitable for attracting qualified candidates.
+    """
+    client_llm = OpenAI(base_url=base_url, api_key="-")
+    try:
+        response = client_llm.chat.completions.create(model="Qwen/Qwen2.5-32B-Instruct-AWQ",messages=[{"role": "user", "content": user_prompt}])
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error in analysis: {str(e)}"
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
