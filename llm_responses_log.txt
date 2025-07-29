@@ -29659,3 +29659,205 @@
   "filepath": ""
 }
 
+--- Response at 2025-07-28 17:17:33.360111 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "duration": "August 2019 - January 2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "28/07/2025",
+      "experience_years": 0.25
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "01/05/2024",
+      "experience_years": 0.33
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, Identity Framework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, TensorFlow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, TypeScript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid is a skilled Software Engineer with experience in both front-end and back-end development. He has contributed to the development of comprehensive ERP systems, utilizing technologies such as Angular, .NET Core, PostgreSQL, and AWS CI/CD. His work includes designing and implementing RESTful APIs, managing databases, and integrating third-party services.",
+  "work_experience_years": 0,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-07-28 17:18:06.438076 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": [
+    "Java",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Python",
+    "Spring Framework",
+    "Spring Boot",
+    "Hibernate",
+    "Spring Cloud",
+    "JSP",
+    "Servlets",
+    "Struts",
+    "JSF",
+    "REST",
+    "SOAP",
+    "Oracle",
+    "MySQL",
+    "NoSQL",
+    "Microsoft SQL Server",
+    "MariaDB",
+    "Maven",
+    "Gradle",
+    "JUnit",
+    "Postman",
+    "SoapUI",
+    "Swagger",
+    "Git",
+    "GitHub",
+    "GitLab",
+    "XML",
+    "JSON",
+    "Jira",
+    "IntelliJ IDEA",
+    "Eclipse",
+    "PyCharm",
+    "VS Code",
+    "Windows",
+    "Linux",
+    "Docker"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's Degree in ICT",
+      "institution": "University of Sindh Jamshoro",
+      "year_of_graduation": 2018
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "02/02/2024",
+      "duration_end": "28/07/2025",
+      "environment": "Java, Spring Boot, SOAP APIs, REST API, Oracle Database, Maven"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023",
+      "environment": "Java, Spring Boot, Open API, REST API, Microsoft SQL Server, Maven, Docker"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023",
+      "environment": "Java, JSF, XHTML, Hibernate, Jersey API, Oracle Database"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023",
+      "environment": "Java, Spring Boot, Spring MVC, Maven, Postman, REST APIs, MariaDB, JDBC, Apache Tiles, jQuery, AJAX, Bootstrap, MySQL, MyBatis, Git, TFS"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021",
+      "environment": "Java, Struts 2, Hibernate, Apache Tomcat, HTML, CSS, JavaScript, jQuery, AJAX"
+    }
+  ],
+  "projects": [
+    {
+      "project_name": "Fintech Product",
+      "client": "First Pay",
+      "description": "Developed REST APIs for a Fintech product, enhancing payment processing functionalities."
+    },
+    {
+      "project_name": "Merchant Portal and Onboarding System",
+      "client": "Stc Pay",
+      "description": "Created and managed REST APIs and database integrations to streamline merchant onboarding."
+    },
+    {
+      "project_name": "Etisalat Digital App Enhancement",
+      "client": "Systems Limited",
+      "description": "Developed front-end UI components and integrated backend services for a large-scale digital application."
+    },
+    {
+      "project_name": "PCP Web Application",
+      "client": "Evamp & Saanga Pvt Ltd",
+      "description": "Designed and implemented a web application from scratch, focusing on user authentication and secure data handling."
+    }
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+

@@ -83,7 +83,7 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
 
     ###  EXTRACTION INSTRUCTIONS
 
-    ###  NAME  
+    ###  NAME
     - Extract the full name only if it clearly appears near the top of the resume.  
     - Do **not** guess or infer. If missing, return `null`.
 
@@ -125,7 +125,7 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
 
     Then count up the years and months in each job, sum them up. 
     For each valid work_experience entry, parse duration_start and duration_end
-    Calculate full months for each job
+    Calculate full months for each job, internship, part-time.
     Sum all months (skip jobs with invalid or missing dates)
     Divide total months by 12
     Round to 2 decimal places like 3.9 years or 4.2 years.
@@ -409,9 +409,9 @@ def Resume_data():
 
     return all_data
 #-----------------------------------------------------------------------------------------------------
-def update_cached_resumes():
-    global cached_resume_data
-    cached_resume_data = Resume_data() 
+# def update_cached_resumes():
+#     global cached_resume_data
+#     cached_resume_data = Resume_data() 
 #-----------------------------------------------------------------------------------------------------
 
 def summarize_resumes(resumes, client_llm, model="Qwen/Qwen2.5-32B-Instruct-AWQ", limit=10):
@@ -441,7 +441,7 @@ def summarize_resumes(resumes, client_llm, model="Qwen/Qwen2.5-32B-Instruct-AWQ"
 
     return "\n".join(summary_list)
 
-cached_resume_data = []
+# cached_resume_data = []
 #-----------------------------------------------------------------------------------------
 
 def estimate_tokens(text):
@@ -583,20 +583,19 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
 
 #---------------------------------------------------------------------------------
 
-def normal_chatbot(chat_history, user_prompt): 
-    global cached_resume_data
+def normal_chatbot(chat_history, user_prompt,selected_candidates=None): 
+
+    print(selected_candidates)
 
     try:
         client_llm = OpenAI(base_url=base_url, api_key="-")
-        resume_summary = summarize_resumes(cached_resume_data,client_llm)
+        #resume_summary = summarize_resumes(cached_resume_data,client_llm)
         
         system_prompt = f"""
 You are a structured, intelligent, and professional Resume Screening Assistant.
 
 Your entire knowledge is limited to the following parsed resume dataset:
-
-### Resume Dataset Snapshot
-{resume_summary}
+{selected_candidates}
 
 You are not a general-purpose assistant. You must not answer questions outside the scope of this resume dataset.
 

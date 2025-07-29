@@ -366,15 +366,10 @@ def render_candidates_page():
         st.info("Select at least one candidate to proceed with analysis.")
 
 def analyze_selected_candidates(final_top_k=5):
-    selected_candidates = filter_selected_candidates(
-        st.session_state.candidates, 
-        st.session_state.selected_candidates
-    )
     selected_indexes = st.session_state.selected_candidates
-
-    if final_top_k < len(selected_candidates):
-        selected_candidates = selected_candidates[:final_top_k]
-
+    if not selected_indexes:
+        st.error("Please select candidates before analyzing.")
+        return
     run_analysis_pipeline(
         job_description=st.session_state.job_description,
         top_k=final_top_k,
@@ -555,12 +550,14 @@ def render_chat_page():
 
 def process_chat_message(user_input):
     """Send message to chatbot without duplicating messages"""
+
     try:
         temp_history = st.session_state.chat_history.copy()
         temp_history.append(("user", user_input))
         
         with st.spinner("AI is thinking..."):
-            response = normal_chatbot(temp_history, user_input)
+            print(st.session_state.selected_candidates)
+            response = normal_chatbot(temp_history, user_input, st.session_state.selected_candidates)
         st.session_state.chat_history.append(("user", user_input))
         st.session_state.chat_history.append(("assistant", response))
         
