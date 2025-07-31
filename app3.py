@@ -143,7 +143,7 @@ Include:
     # Settings in a clean layout
     col1, col2 = st.columns([1, 1])
     with col1:
-        top_k = st.slider("Number of candidates to find", 5, 50, 10)
+        top_k = st.slider("Number of candidates to find", 1, len(st.session_state.candidates), 1)
     
     # Analyze button
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -561,7 +561,7 @@ def process_chat_message(user_input):
                 st.session_state.candidates, 
                 st.session_state.selected_candidates
             )
-            
+
             print(f"Selected candidates for chat: {selected_candidates}")
 
             response = normal_chatbot(temp_history, user_input,selected_candidates)
