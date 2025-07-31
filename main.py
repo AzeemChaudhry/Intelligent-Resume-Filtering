@@ -373,41 +373,41 @@ Analyze the candidates with respect to the job description and:
 
 
 #---------------------------------------------------------------------------------------------
-def Resume_data():
-    all_data = []
-    offset = None
+# def Resume_data():
+#     all_data = []
+#     offset = None
 
-    while True:
-        try:
-            scroll_result, next_offset = client.scroll(
-                collection_name="cv_data",
-                with_payload=True,
-                with_vectors=True,
-                limit=100,
-                offset=offset
-            )
+#     while True:
+#         try:
+#             scroll_result, next_offset = client.scroll(
+#                 collection_name="cv_data",
+#                 with_payload=True,
+#                 with_vectors=True,
+#                 limit=100,
+#                 offset=offset
+#             )
 
-            for point in scroll_result:
-                all_data.append({
-                    "id": point.id,
-                    "name": point.payload.get("name", "unknown"),
-                    "filepath": point.payload.get("filepath", ""),
-                    "skills": point.payload.get("skills", []),
-                    "education": point.payload.get("education", []),
-                    "work_experience": point.payload.get("work_experience", []),
-                    "projects": point.payload.get("projects", []),
-                    "candidate_summary": point.payload.get("candidate_summary", ""),
-                    "work_experience_years": point.payload.get("work_experience_years", 0)
-                })
+#             for point in scroll_result:
+#                 all_data.append({
+#                     "id": point.id,
+#                     "name": point.payload.get("name", "unknown"),
+#                     "filepath": point.payload.get("filepath", ""),
+#                     "skills": point.payload.get("skills", []),
+#                     "education": point.payload.get("education", []),
+#                     "work_experience": point.payload.get("work_experience", []),
+#                     "projects": point.payload.get("projects", []),
+#                     "candidate_summary": point.payload.get("candidate_summary", ""),
+#                     "work_experience_years": point.payload.get("work_experience_years", 0)
+#                 })
 
-            if next_offset is None:
-                break
-            offset = next_offset
-        except Exception as e:
-            print(f"Error retrieving resume data: {e}")
-            break
+#             if next_offset is None:
+#                 break
+#             offset = next_offset
+#         except Exception as e:
+#             print(f"Error retrieving resume data: {e}")
+#             break
 
-    return all_data
+#     return all_data
 #-----------------------------------------------------------------------------------------------------
 # def update_cached_resumes():
 #     global cached_resume_data
@@ -445,43 +445,101 @@ def summarize_resumes(resumes, client_llm, model="Qwen/Qwen2.5-32B-Instruct-AWQ"
 #-----------------------------------------------------------------------------------------
 
 def estimate_tokens(text):
-    """Rough estimation: 1 word ≈ 1.5 tokens."""
-    return int(len(text.split()) * 1.5)
+    """
+    Estimate token count from a string (approx).
+    Returns an integer.
+    """
+    if not isinstance(text, str):
+        return 0
+    try:
+        num_words = len(text.split())
+        num_chars = len(text)
+        return int((num_words / 0.75 + num_chars / 4) / 2)
+    except:
+        return 0
+
 
 #----------------------------------------------------------------------------------------------
 
-def truncate_history(chat_history, system_prompt, max_tokens=3500):
-    """Remove oldest messages until history fits within token limit."""
-    while estimate_tokens(system_prompt + "\n".join(f"{r}: {m}" for r, m in chat_history)) > max_tokens:
-        if len(chat_history) > 2:
-            chat_history.pop(1)
-        else:
-            break
-    return chat_history
-#------------------------------------------------------------------------------------
+def truncate_history(chat_history, max_tokens=3500, preserve_head=1, preserve_tail=3):
+    """
+    Trims chat history by preserving the head and tail and removing middle entries to stay under token limit.
+    
+    Args:
+        chat_history (list): List of (role, message) tuples.
+        system_prompt (str): The system prompt string (token cost is counted).
+        max_tokens (int): Token budget.
+        preserve_head (int): Number of messages to always preserve at the start.
+        preserve_tail (int): Number of messages to always preserve at the end.
+    
+    Returns:
+        List of (role, message) tuples within token limit.
+    """
+    if not chat_history:
+        return []
 
-def summarize_history(chat_history, client_llm):
-    """Summarize older messages and replace them with a single summary block."""
-    if len(chat_history) <= 5:
-        return chat_history 
-    to_summarize = chat_history[:-4]
-    preserved = chat_history[-4:]
+    head = chat_history[:preserve_head]
+    tail = chat_history[-preserve_tail:]
+    middle = chat_history[preserve_head:-preserve_tail] if preserve_tail > 0 else chat_history[preserve_head:]
+
+    def history_to_text(msgs):
+        return "\n".join(f"{r}: {m}" for r, m in msgs)
+
+    full_tokens =  estimate_tokens(history_to_text(head + middle + tail))
+
+    while middle and full_tokens > max_tokens:
+        middle.pop(0)  # remove from the oldest middle entry
+        full_tokens = estimate_tokens(history_to_text(head + middle + tail))
+        print(f"\nTrimming middle entries, new token count: {full_tokens}\n")
+
+    return head + middle + tail
+
+
+
+#------------------------------------------------------------------------------------
+def summarize_history(chat_history, client_llm, preserve_recent=4, model="Qwen/Qwen2.5-32B-Instruct-AWQ"):
+    """
+    Summarizes older messages into one system message, keeping only the most recent interactions intact.
+
+    Args:
+        chat_history (list): List of (role, message) tuples.
+        client_llm: LLM client for summarization.
+        preserve_recent (int): Number of messages from the end to keep uncompressed.
+    
+    Returns:
+        A trimmed chat history with summary prepended.
+    """
+    if len(chat_history) <= preserve_recent + 1:
+        return chat_history
+
+    old_messages = chat_history[:-preserve_recent]
+    recent = chat_history[-preserve_recent:]
+
+    history_text = "\n".join(f"{role}: {msg}" for role, msg in old_messages if msg.strip())
+
+    if not history_text.strip():
+        return recent
 
     try:
-        history_text = "\n".join(f"{role}: {msg}" for role, msg in to_summarize)
         summary_result = client_llm.chat.completions.create(
-            model="Qwen/Qwen2.5-32B-Instruct-AWQ",
+            model=model,
             messages=[
-                {"role": "system", "content": "Summarize this conversation briefly:"},
+                {
+                    "role": "system",
+                    "content": "Summarize the earlier part of this conversation into concise bullet points focused on resume/job screening."
+                },
                 {"role": "user", "content": history_text}
             ]
         )
         summary = summary_result.choices[0].message.content.strip()
-        summarized_history = [("system", f"Summary of earlier conversation:\n{summary}")]
-        return summarized_history + preserved
+        summarized = [("system", f"Summary of earlier conversation:\n{summary}")]
+        return summarized + recent
 
     except Exception as e:
-        return [("system", f"Summarization failed: {e}")] + preserved
+        return [("system", f"Summarization failed: {e}")] + recent
+
+
+
 
 #-------------------------------------------------------------------
 
@@ -503,26 +561,47 @@ def display_all_candidates(candidates: List[dict]) -> str:
 #-----------------------------------------------------------------------------------------
 
 def filter_selected_candidates(all_candidates: List[dict], selected_indexes: List[int]) -> List[dict]:
-    selected = []
-    for idx in selected_indexes:
-        if 1 <= idx <= len(all_candidates):
-            selected.append(all_candidates[idx - 1])
-    return selected
+    return [all_candidates[i - 1] for i in selected_indexes if 1 <= i <= len(all_candidates)]
 
 #----------------------------------------------------------------------------------------------------------------
 
 def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_candidates=None, top_k=5):
     global cached_resume_data
+
+    def log_tokens(stage, history):
+        token_count = estimate_tokens("\n".join(f"{r}: {m}" for r, m in history))
+        print("\n" + "="*60)
+        print(f"Token Check — {stage}")
+        print(f"Estimated tokens: {token_count}")
+        print(f"Messages: {len(history)}")
+        print("="*60 + "\n")
+
     try:
         client_llm = OpenAI(base_url=base_url, api_key="-")
 
+        # STEP 0: Append the new user input
         chat_history.append(("user", user_prompt))
-        full_text = "\n".join(f"{r}: {m}" for r, m in chat_history)
 
-        if estimate_tokens(full_text) > 3500:
-            chat_history = summarize_history(chat_history, client_llm)
-            chat_history = truncate_history(chat_history, "")
+        log_tokens("Before Summarization", chat_history)
 
+        # STEP 1: Summarize if not already summarized
+        if not chat_history or not chat_history[0][1].lower().startswith("summary of earlier"):
+            chat_history = summarize_history(chat_history, client_llm, preserve_recent=4)
+
+        log_tokens("After Summarization", chat_history)
+
+        # STEP 2: Truncate middle if still over token limit
+        if estimate_tokens("\n".join(f"{r}: {m}" for r, m in chat_history)) > 3500:
+            chat_history = truncate_history(
+                chat_history,
+                max_tokens=3500,
+                preserve_head=1,
+                preserve_tail=3
+            )
+
+        log_tokens("After Truncation", chat_history)
+
+        # ------------------ STAGE 1: Candidate Selection ------------------
         if selected_indexes is None or all_candidates is None:
             parsed = job_description_parser(user_prompt)
             scores = searching_Qdrant(parsed, top_k)
@@ -537,6 +616,7 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
                 "job_description": user_prompt
             }
 
+        # ------------------ STAGE 2: Candidate Analysis ------------------
         selected = filter_selected_candidates(all_candidates, selected_indexes)
         if not selected:
             error_msg = "No valid candidates selected for analysis."
@@ -547,9 +627,10 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
                 "chat_history": chat_history
             }
 
-        # Perform analysis
         result = analysis(user_prompt, selected, top_k=len(selected))
         chat_history.append(("assistant", result))
+
+        log_tokens("After Analysis Response", chat_history)
 
         return {
             "stage": "analysis",
@@ -558,7 +639,7 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
         }
 
     except Exception as e:
-        error_msg = f"Error in unified JD pipeline: {str(e)}"
+        error_msg = f"❌ Error in unified JD pipeline: {str(e)}"
         chat_history.append(("assistant", error_msg))
         return {
             "stage": "error",
@@ -585,49 +666,50 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
 
 def normal_chatbot(chat_history, user_prompt,selected_candidates=None): 
 
-    print(selected_candidates)
-
     try:
         client_llm = OpenAI(base_url=base_url, api_key="-")
         #resume_summary = summarize_resumes(cached_resume_data,client_llm)
         
         system_prompt = f"""
-You are a structured, intelligent, and professional Resume Screening Assistant.
+                You are a structured, intelligent, and professional Resume Screening Assistant.
 
-Your entire knowledge is limited to the following parsed resume dataset:
-{selected_candidates}
+                Your entire knowledge is limited to the following parsed resume dataset:
+                {selected_candidates}
 
-You are not a general-purpose assistant. You must not answer questions outside the scope of this resume dataset.
+                You are not a general-purpose assistant. You must not answer questions outside the scope of this resume dataset.
 
-### Allowed:
-- Recommend top candidates with justifications.
-- Answer detailed questions about candidates' skills, education, experience, and project backgrounds.
-- Provide professional analysis based solely on the parsed data.
+                ### Allowed:
+                - Recommend top candidates with justifications.
+                - Answer detailed questions about candidates' skills, education, experience, and project backgrounds.
+                - Provide professional analysis based solely on the parsed data.
 
-### Forbidden:
-- Do **not** answer any questions unrelated to resumes, hiring, or CVs.
-- Do **not** generate jokes, opinions, general knowledge, or perform unrelated tasks (e.g., math, coding help, fun facts).
-- Do **not** infer, hallucinate, or guess missing information.
+                ### Forbidden:
+                - Do **not** answer any questions unrelated to resumes, hiring, or CVs.
+                - Do **not** generate jokes, opinions, general knowledge, or perform unrelated tasks (e.g., math, coding help, fun facts).
+                - Do **not** infer, hallucinate, or guess missing information.
 
-### Style & Behavior:
-- Be formal, concise, and professional.
-- Use bullet points or markdown tables for clarity.
-- If a question is outside scope, respond clearly:  
-  `"I'm designed only to answer questions related to resumes or candidate analysis. Please provide a relevant query."`
+                ### Style & Behavior:
+                - Be formal, concise, and professional.
+                - Use bullet points or markdown tables for clarity.
+                - If a question is outside scope, respond clearly:  
+                `"I'm designed only to answer questions related to resumes or candidate analysis. Please provide a relevant query."`
 
-Do not break character under any circumstances.
-""".strip()
+                Do not break character under any circumstances.
+                """.strip()
+
+        if not chat_history or chat_history[0][0] != "system":
+            chat_history.insert(0, ("system", system_prompt))
 
         chat_history.append(("user", user_prompt))
-        full_text = system_prompt + "\n" + "\n".join(f"{r}: {m}" for r, m in chat_history)
-        
+
+        # Estimate token usage
+        full_text = "\n".join(f"{r}: {m}" for r, m in chat_history)
         if estimate_tokens(full_text) > 3500:
             chat_history = summarize_history(chat_history, client_llm)
             chat_history = truncate_history(chat_history, system_prompt)
-        
-        messages = [{"role": "system", "content": system_prompt}]
-        for role, msg in chat_history:
-            messages.append({"role": role, "content": msg})
+
+        # Convert chat history to OpenAI message format
+        messages = [{"role": role, "content": msg} for role, msg in chat_history]
 
         result = client_llm.chat.completions.create(
             model="Qwen/Qwen2.5-32B-Instruct-AWQ",
@@ -637,7 +719,7 @@ Do not break character under any circumstances.
         response = result.choices[0].message.content
         chat_history.append(("assistant", response))
         return response
-    
+
     except Exception as e:
         return f"Error in chatbot: {str(e)}"
 #---------------------------------------------------------------------

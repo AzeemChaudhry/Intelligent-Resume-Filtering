@@ -13,12 +13,12 @@ from main import (
     cv_parser_pipeline, 
     initialize_collection, 
     create_vec_db,
-    update_cached_resumes,
     normal_chatbot,
     jd_analysis_pipeline,
     complete_jd_analysis,
     filter_selected_candidates
 )
+
 
 st.set_page_config(
     page_title="AI Resume Screener",
@@ -83,7 +83,6 @@ def process_resumes(uploaded_files):
         initialize_collection()
         candidates = cv_parser_pipeline(save_dir)
         create_vec_db(candidates)
-        update_cached_resumes()
         st.session_state.candidates = candidates
         st.session_state.processing_complete = True
         
@@ -548,6 +547,7 @@ def render_chat_page():
             st.session_state.chat_input_key += 1
             st.rerun()
 
+
 def process_chat_message(user_input):
     """Send message to chatbot without duplicating messages"""
 
@@ -557,7 +557,14 @@ def process_chat_message(user_input):
         
         with st.spinner("AI is thinking..."):
             print(st.session_state.selected_candidates)
-            response = normal_chatbot(temp_history, user_input, st.session_state.selected_candidates)
+            selected_candidates = filter_selected_candidates(
+                st.session_state.candidates, 
+                st.session_state.selected_candidates
+            )
+            
+            print(f"Selected candidates for chat: {selected_candidates}")
+
+            response = normal_chatbot(temp_history, user_input,selected_candidates)
         st.session_state.chat_history.append(("user", user_input))
         st.session_state.chat_history.append(("assistant", response))
         
