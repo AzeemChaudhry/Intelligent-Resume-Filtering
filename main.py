@@ -11,6 +11,7 @@ from qdrant_client.models import PointStruct, Distance, VectorParams
 from collections import defaultdict
 from datetime import datetime
 import pytesseract
+from transformers import AutoTokenizer
 import tiktoken 
 from pdf2image import convert_from_path
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -102,7 +103,7 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     ### EDUCATION  
     - Extract exactly what is written in the education section. 
     -Normalize capitilization. 
-    - Include degree, field, and optionally the institution.  
+    - Include degree, field, and the institution.
     - Normalize known abbreviations:
     - `"BSc CS"`, `"B.Sc. in Computer Science"` → `"BSc Computer Science"`
     - Do not guess or fill in missing data.
@@ -334,6 +335,7 @@ def sorting_candidates(score_board: Dict[int, float]) -> List[dict]:
 # Function to perform in-depth candidate analysis based on job description and selected candidates
 
 def analysis(job_description, selected_candidates, top_k=5):
+    
     system_prompt = f"""
 You are an expert technical recruiter. Use the information provided below to perform an in-depth candidate evaluation.
 
@@ -388,14 +390,13 @@ Analyze the candidates with respect to the job description and:
 #-----------------------------------------------------------------------------------------
 
 
-def estimate_tokens(text, model="Qwen/Qwen2.5-32B-Instruct-AWQ"):
-    try:
-        encoding = tiktoken.encoding_for_model(model)
-        return len(encoding.encode(text))
-    except:
-        # Fallback: ~1 token = 4 characters
-        return max(20, int(len(text) / 4))
-
+def estimate_tokens(text, model_name="Qwen/Qwen2.5-32B-Instruct-AWQ"):
+        if not isinstance(text, str):
+            text = str(text)  # Ensure text is a string
+        
+        tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+        tokens = tokenizer.encode(text)
+        return len(tokens)
 
 #----------------------------------------------------------------------------------------------
 def truncate_history(chat_history, max_tokens=30000, preserve_head=1, preserve_tail=2):
@@ -462,7 +463,7 @@ def summarize_history(chat_history, client_llm, preserve_recent=3, model="Qwen/Q
                 },
                 {"role": "user", "content": history_text}
             ],
-            max_tokens=300,
+            max_tokens=800,
             temperature=0.1
         )
         summary = summary_result.choices[0].message.content.strip()
@@ -583,11 +584,20 @@ def normal_chatbot(chat_history, user_prompt,selected_candidates=None):
 
     try:
         client_llm = OpenAI(base_url=base_url, api_key="-")
-        
+        jd = (
+    "We're hiring a Senior React Developer with 3+ years of experience to build and maintain high-performance web applications. "
+    "Candidates must have expertise in React (hooks & class-based), Redux, Material UI, JavaScript, HTML5, and CSS3. "
+    "Key responsibilities include developing React apps, implementing Redux, creating responsive UIs, optimizing performance, "
+    "mentoring junior developers, and troubleshooting issues. "
+    "Requirements include a Bachelor's in CS or related field, proficiency in Git and RESTful APIs, and strong collaboration skills. "
+    "Preferred qualifications: experience with TypeScript, testing frameworks (Jest, Mocha), responsive design, and CI/CD pipelines."
+)
         system_prompt = f"""
                             You are a structured Resume Screening Assistant. Your knowledge is limited to:
                             {selected_candidates or 'NO RESUME DATA PROVIDED'}
-
+                            Your task is to assist with resume analysis and candidate selection based on the provided job description.
+                            ## Job Description:
+                            {jd}
                             ### Allowed:
                             - Candidate recommendations with justifications
                             - Questions about skills/education/experience
@@ -611,7 +621,7 @@ def normal_chatbot(chat_history, user_prompt,selected_candidates=None):
         if estimate_tokens(full_text)> 2500:
             print("Chat history exceeds 2500 tokens, summarizing and truncating...\n")
             chat_history = summarize_history(chat_history, client_llm) 
-            chat_history = truncate_history(chat_history) # only triggers if the tokens is over 3000 (default in the truncate_history function)
+            #chat_history = truncate_history(chat_history) # only triggers if the tokens is over 3000 (default in the truncate_history function)
 
         log_tokens("Before Chat Completion", chat_history)
 
