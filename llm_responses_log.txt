@@ -38165,3 +38165,2510 @@
   "filepath": ""
 }
 
+--- Response at 2025-07-31 16:28:51.369245 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "duration": "August 2019 - January 2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "31/07/2025",
+      "months_worked": 15
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "months_worked": 6
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI Powered POS Mobile App) — Flutter, Tensorflow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, Typescript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Software Engineer with experience in full-stack development using Angular and .NET Core. Contributed to the development of ERP products and healthcare systems. Skilled in backend technologies such as .NET, PostgreSQL, and RESTful APIs.",
+  "work_experience_years": 1,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-07-31 16:31:23.581212 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "start_date": "01/08/2019",
+      "end_date": "31/01/2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "31/07/2025",
+      "months_worked": 15
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "months_worked": 6
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, TensorFlow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, TypeScript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Experienced Software Engineer with a Bachelor of Science in Computer Science from FAST NUCES. Specializes in full-stack development with expertise in Angular, .NET Core, and PostgreSQL. Has contributed to the development of comprehensive ERP products and healthcare systems. Winner of the Huawei Innovation Track Competition 2023-2024.",
+  "work_experience_years": 2,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-07-31 16:31:47.367533 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": ["Java", "HTML", "CSS", "JavaScript", "Python", "Spring Framework", "Spring Boot", "Hibernate", "Spring Cloud", "JSP", "Servlets", "Struts", "JSF", "REST", "SOAP", "Oracle", "MySQL", "NoSQL", "Microsoft SQL Server", "MariaDB", "Maven", "Gradle", "JUnit", "Postman", "SoapUI", "Swagger", "Git", "GitHub", "GitLab", "XML", "JSON", "Jira", "IntelliJ IDEA", "Eclipse", "PyCharm", "VS Code", "Windows", "Linux"],
+  "education": ["Bachelor's Degree in ICT, University of Sindh Jamshoro, Year of Graduation: 2018"],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "02/02/2024",
+      "duration_end": "31/07/2025"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021"
+    }
+  ],
+  "projects": [
+    "Developed REST APIs for a Fintech product, enhancing payment processing functionalities.",
+    "Created and managed REST APIs and database integrations to streamline merchant onboarding.",
+    "Developed front-end UI components and integrated backend services for a large-scale digital application.",
+    "Designed and implemented a web application from scratch, focusing on user authentication and secure data handling."
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-07-31 16:32:11.794045 ---
+{
+  "name": "Hammad Hassan",
+  "skills": [
+    "Python",
+    "Java",
+    "JavaScript",
+    "Assembly Language",
+    "HTML",
+    "R",
+    "SQL",
+    "CSS",
+    "GoLang",
+    "Solidity",
+    "MERN",
+    "React.js",
+    "Node.js",
+    "Express.js",
+    "Nextjs",
+    "TensorFlow",
+    "PyTorch",
+    "NumPy",
+    "Pandas",
+    "Matplotlib",
+    "MongoDB",
+    "MySQL",
+    "Firebase",
+    "Oracle",
+    "CI/CD",
+    "Docker",
+    "Git",
+    "GitHub Actions",
+    "Minikube",
+    "Kubernetes",
+    "PyCharm",
+    "Eclipse",
+    "Visual Studio",
+    "TravisCI",
+    "Machine Learning",
+    "AI",
+    "Blockchain",
+    "Cloud Computing",
+    "Networking"
+  ],
+  "education": [
+    {
+      "degree": "BS Computer Science",
+      "field": "Computer Science",
+      "institution": "FAST National University of Computer and Emerging Sciences",
+      "duration": "2020-2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "NADRA Headquarters",
+      "job_title": "Network Engineer Intern",
+      "job_location": "Islamabad",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Virtusa",
+      "job_title": "React JS Developer",
+      "job_location": "Remote",
+      "duration_start": "01/01/2023",
+      "duration_end": "31/03/2023"
+    },
+    {
+      "company_name": "BXTrack LTD",
+      "job_title": "Full Stack Development Intern",
+      "job_location": "Islamabad",
+      "duration_start": "01/10/2022",
+      "duration_end": "30/06/2023"
+    },
+    {
+      "company_name": "IKNEX LAB FAST NUCES",
+      "job_title": "React JS Developer Intern",
+      "job_location": "Islamabad",
+      "duration_start": "01/06/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "ENGRO Headquarters",
+      "job_title": "Data Analyst Intern",
+      "job_location": "Islamabad",
+      "duration_start": "01/11/2023",
+      "duration_end": "31/01/2024"
+    }
+  ],
+  "projects": [
+    "Final Year Project: Blockchain Powered E-Challan System — FineFlow (MERN, Web3, Solidity, Flask)",
+    "ElectLiveLiness Face Detector using Artificial Intelligence",
+    "Advanced AI Model Implementation with Machine Learning Techniques",
+    "Doctor Appointment System - Oladoc (MERN, Firebase)",
+    "Gitlytics - (Python, Flask, React, PostgreSQL, Docker)"
+  ],
+  "candidate_summary": "Passionate tech enthusiast proficient in full stack development, networking, AI, and ML. Actively seeking entry-level opportunities to contribute to innovative projects and leverage diverse technical skills effectively.",
+  "work_experience_years": 1,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\hammadhassan_CV.pdf"
+}
+
+--- Response at 2025-07-31 16:32:35.619329 ---
+{
+  "name": "M Tahir Hassan Khan",
+  "skills": [
+    "Node.js",
+    "Express",
+    "JavaScript",
+    "MongoDB",
+    "Redis",
+    "Microservices",
+    "Third-Party Integrations",
+    "API Design & Development",
+    "Problem Solving",
+    "Git / GitHub",
+    "Nextjs",
+    "Cloud Services (AWS, Azure)",
+    "Authentication & Authorization (OAuth, JWT, AuthO)",
+    "Testing (Jest, Mocha, Chai)",
+    "Version Control (Git, GitLab)",
+    "CI/CD (Travis Cl, GitHub Actions)",
+    "ORM/ODM (Mongoose, Sequelize)"
+  ],
+  "education": [
+    {
+      "degree": "BS Software Engineering",
+      "field": "Software Engineering",
+      "institution": "COMSATS University Islamabad",
+      "duration": "2020 - 2023"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "Burnt Brains",
+      "job_title": "Junior Backend Developer",
+      "job_location": "Not specified",
+      "duration_start": "01/01/2024",
+      "duration_end": "31/07/2025",
+      "details": [
+        "Designed and developed REST and RESTful APIs, managing end-to-end project lifecycles and directly collaborating with clients and team leads.",
+        "Implemented a system to process complex .xlsx-based mathematical problems with predefined formulas, integrating it into a live site for real-time responses.",
+        "Developed features for healthcare systems, integrated Redis for caching, and worked with third-party tools like Twilio, Retell Al, and FindHelp APIs.",
+        "Focused on the controller-service model, adhering to the MVC architecture, and optimized system performance.",
+        "Utilized tools and technologies including VS Code, Postman, GitHub, JavaScript, Node.js, Express, MongoDB Compass, MongoAtlas, and Slack.",
+        "Mentored a junior developer and served as a team lead on select projects."
+      ]
+    },
+    {
+      "company_name": "Side Projects",
+      "job_title": "Software Developer",
+      "job_location": "Not specified",
+      "duration_start": "01/01/2023",
+      "duration_end": "31/07/2025",
+      "details": [
+        "Websites: Edu Online Tutors, Roots Tutor Services built using WordPress, Next.js, React, and MongoDB.",
+        "Mobile App: Client management app created with Flutter and a Node.js backend.",
+        "E-Commerce APIs: Developed RESTful APIs for an e-commerce app using Node.js and Express.",
+        "Technologies used: Flutter, React, Next.js, Node.js, WordPress, Shopify, MongoDB. Completed each project in 2 weeks, overcoming design challenges with templates and ChatGPT, and learned new technologies like Flutter and Nextjs."
+      ]
+    }
+  ],
+  "projects": [],
+  "candidate_summary": "Experienced Back-End Developer specializing in Node.js, MongoDB, and microservices, with expertise in healthcare and e-commerce. Proven success in building high-performance APIs processing over 4 million records with sub-2-second response times. Skilled in third-party integrations, cloud platforms (AWS, Azure), and tools like Postman. Adaptable, a critical thinker, and experienced in mentoring, seeking a BackEnd Developer role to deliver impactful, scalable solutions.",
+  "work_experience_years": 1,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\hassan's CV Resume.pdf"
+}
+
+--- Response at 2025-07-31 16:33:09.335197 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl certificates", "jira", "jenkins", "bitbucket", "linux", "windows os", "shell scripting", "agile", "scrum", "kanban", "restful apis", "web services", "devops", "problem-solving", "debugging", "communication", "collaboration", "aws", "azure", "gcp", "docker", "kubernetes", "containerization"],
+  "education": ["bachelor's degree in computer science", "bachelor's degree in it"],
+  "work_experience": ["backend development", "java spring boot", "relational database schemas", "secure data transmission", "debugging backend applications", "mentoring junior developers", "task management", "ci/cd", "linux/windows os", "shell scripting", "agile/scrum/kanban methodologies", ".net c#", "third-party integrations", "devops processes", "cloud platforms", "docker", "kubernetes", "containerization"],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-07-31 16:45:14.757119 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "duration": "August 2019 - January 2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "31/07/2025",
+      "months_worked": 15
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "months_worked": 6
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, TensorFlow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, TypeScript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid is a Software Engineer with a Bachelor of Science in Computer Science from FAST NUCES. He has experience working as a Full Stack Developer at IntegCubes and as a .NET Backend Developer at Merik Solutions. His technical skills include C#, JavaScript, Python, Angular, .NET, PostgreSQL, Docker, and AWS DevOps.",
+  "work_experience_years": 1,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-07-31 16:45:43.022994 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": ["Java", "HTML", "CSS", "JavaScript", "Python", "Spring Framework", "Spring Boot", "Hibernate", "Spring Cloud", "JSP", "Servlets", "Struts", "JSF", "REST", "SOAP", "Oracle", "MySQL", "NoSQL", "Microsoft SQL Server", "MariaDB", "Maven", "Gradle", "JUnit", "Postman", "SoapUI", "Swagger", "Git", "GitHub", "GitLab", "XML", "JSON", "Jira", "IntelliJ IDEA", "Eclipse", "PyCharm", "VS Code", "Windows", "Linux"],
+  "education": ["Bachelor's Degree in ICT, University of Sindh Jamshoro, Year of Graduation: 2018"],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/02/2024",
+      "duration_end": "31/07/2025",
+      "environment": "Java, Spring Boot, SOAP APIs, REST API, Oracle Database, Maven"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "01/11/2023",
+      "environment": "Java, Spring Boot, Open API, REST API, Microsoft SQL Server, Maven, Docker"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023",
+      "environment": "Java, JSF, XHTML, Hibernate, Jersey API, Oracle Database"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "01/02/2023",
+      "environment": "Java, Spring Boot, Spring MVC, Maven, Postman, REST APIs, MariaDB, JDBC, Apache Tiles, jQuery, AJAX, Bootstrap, MySQL, MyBatis, Git, TFS"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021",
+      "environment": "Java, Struts 2, Hibernate, Apache Tomcat, HTML, CSS, JavaScript, jQuery, AJAX"
+    }
+  ],
+  "projects": [
+    "Fintech Product - First Pay",
+    "Merchant Portal and Onboarding System - Stc Pay",
+    "Etisalat Digital App Enhancement - Systems Limited",
+    "PCP Web Application - Evamp & Saanga Pvt Ltd"
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-07-31 16:45:55.342283 ---
+{
+  "name": "Bilal Ranjha",
+  "skills": [
+    "Python",
+    "Django",
+    "REST APIs",
+    "Selenium",
+    "PyautoGUI",
+    "SQLite",
+    "PostgreSQL",
+    "Git",
+    "GitHub",
+    "Postman",
+    "Django REST Framework",
+    "Bootstrap",
+    "BOT Development",
+    "Web Scrapping",
+    "HTML",
+    "CSS",
+    "Problem Solving"
+  ],
+  "education": [],
+  "work_experience": [],
+  "projects": [
+    "YouTube Video Uploading BOT Using API",
+    "Instagram Post Upload BOT Using API",
+    "Twitter Post Upload BOT Using API",
+    "Facebook Post Upload BOT Using Selenium || PyautoGUI",
+    "Facebook Group Post Upload BOT Using Selenium || PyautoGUI",
+    "Automatic Email Scraper Using Selenium",
+    "Auto Email Sender BOT",
+    "Animi Movies Website E-commerce",
+    "Website Social Media Website ToDo (Django || HTML || CSS)",
+    "Study Portal (Django || Html || CSS)",
+    "Weather APP (Django || HTML || CSS)"
+  ],
+  "candidate_summary": "Hi, i am Bilal Ranjha. a Python & Django developer with front-end fluency (HTML/CSS/JS). Eager learner, results-oriented, and a team player.",
+  "work_experience_years": 0,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Grey Clean CV Resume Photo_1_1.pdf_20250124_121916_0000.pdf"
+}
+
+--- Response at 2025-07-31 16:46:19.786700 ---
+{
+  "name": "HAMMAD UR REHMAN",
+  "skills": [
+    "C++",
+    "Python",
+    "HTML",
+    "CSS",
+    "C",
+    "JavaScript",
+    "PHP",
+    "SQL",
+    "TensorFlow",
+    "scikit-learn",
+    "PyTorch",
+    "Angular",
+    "GitLab",
+    "MS Project",
+    "Snort",
+    "Nmap",
+    "Aurora",
+    "pfSense",
+    "ZAP",
+    "Problem-solving",
+    "Time Management",
+    "Communication"
+  ],
+  "education": [
+    "Bachelor in Information Technology, Bahria University, Islamabad, Pakistan 2021 - 2025",
+    "Intermediate, Fazaia Inter College E-9, Islamabad, Pakistan 2020",
+    "Matriculation, Fazaia Inter College E-9, Islamabad, Pakistan 2018"
+  ],
+  "work_experience": [
+    {
+      "company_name": "Cyber Reconnaissance and Combat Center",
+      "job_title": "Cyber Security Blue Team Intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2024",
+      "duration_end": "31/07/2025",
+      "months": 3
+    },
+    {
+      "company_name": "Pakistan Air Force",
+      "job_title": "IT Specialist Intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "31/07/2025",
+      "months": 3
+    },
+    {
+      "company_name": "Ninjas Code Pvt Ltd",
+      "job_title": "SEO Specialist Intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2024",
+      "duration_end": "31/07/2025",
+      "months": 3
+    },
+    {
+      "company_name": "Sino Pak Center for Artificial Intelligence, PAF-IAST",
+      "job_title": "Computer Vision and Robotics Intern",
+      "job_location": "Haripur, Pakistan",
+      "duration_start": "01/07/2023",
+      "duration_end": "31/07/2025",
+      "months": 3
+    }
+  ],
+  "projects": [
+    "Personal Portfolio Website",
+    "Hospital Management System",
+    "Air Quality in Nairobi",
+    "Earthquake Damage Nepal",
+    "Computer Network Design for Bahria University",
+    "Bankruptcy in Poland",
+    "Customer Churn Prediction",
+    "Housing in Brazilian and Mexican Real Estate Markets",
+    "A/B Testing at World Quant University",
+    "Credit Card Fraud Detection",
+    "Database Creation of University",
+    "Sales Prediction System",
+    "Book Recommendation System"
+  ],
+  "candidate_summary": "A highly motivated graduate from Bahria University with expertise in Artificial Intelligence, Web Development, Data Science, and Machine Learning. Seeking a challenging position where I can apply my technical knowledge and skills while contributing to innovative solutions and professional growth.",
+  "work_experience_years": 1,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\hammad_latex graduate CV.pdf"
+}
+
+--- Response at 2025-07-31 16:47:49.896432 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl certificates", "backend development", "linux/windows os", "shell scripting", "agile/scrum/kanban", "restful apis", "web services", ".net c#", "third-party integrations", "devops", "problem-solving", "debugging", "communication", "collaboration"],
+  "education": ["bachelor's degree in computer science", "bachelor's degree in it"],
+  "work_experience": ["develop and maintain java microservices", "design and optimize relational database schemas", "ensure secure data transmission", "debug and optimize backend applications", "mentor junior developers", "work with jira, jenkins, and bitbucket"],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-07-31 17:09:26.449381 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "duration": "August 2019 - January 2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "31/07/2025",
+      "description": "Contributing to the development of Quantus, a comprehensive ERP product with modules including CRM, HRM, & Supply Chain Management. Full stack development using Angular for frontend, .NET Core with Clean Architecture for backend & PostgreSQL. Developing RESTful APIs, writing complex SQL stored procedures for CRM reports. Integrated third-party APIs, including Meta Ads, Google AdSense, & Stripe Payment Gateway. Implemented authentication/authorization & hierarchical access control (Role-based Access) using Identity Framework Core & ActionFilters. Implemented AWS CI/CD pipeline, automating the deployment process & reducing deployment time by over 50%."
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "description": "Contributed to the backend development of a Healthcare ERP built on a microservices architecture using .NET Core 6.0, hosted on Azure Kubernetes Service. Designed & implemented RESTful APIs, conducted testing using Postman & wrote unit tests using xUnit. Utilized EF Core as the ORM for efficient management of relational data in SQL Server. Developed the feature of Live Dashboards & Live Notifications using SignalR."
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, Tensorflow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, Typescript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid has experience as a Software Engineer and Full Stack Developer working with Angular, .NET, and PostgreSQL. He has contributed to the development of ERP systems and healthcare applications using microservices architecture and agile methodologies.",
+  "work_experience_years": 0,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-07-31 17:09:53.391379 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": [
+    "Java",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Python",
+    "Spring Framework",
+    "Spring Boot",
+    "Hibernate",
+    "Spring Cloud",
+    "JSP",
+    "Servlets",
+    "Struts",
+    "JSF",
+    "REST",
+    "SOAP",
+    "Oracle",
+    "MySQL",
+    "NoSQL",
+    "Microsoft SQL Server",
+    "MariaDB",
+    "Maven",
+    "Gradle",
+    "JUnit",
+    "Postman",
+    "SoapUI",
+    "Swagger",
+    "Git",
+    "GitHub",
+    "GitLab",
+    "XML",
+    "JSON",
+    "Jira",
+    "IntelliJ IDEA",
+    "Eclipse",
+    "PyCharm",
+    "VS Code",
+    "Windows",
+    "Linux",
+    "Docker"
+  ],
+  "education": [
+    "Bachelor's Degree in ICT, University of Sindh Jamshoro, Year of Graduation: 2018"
+  ],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "02/02/2024",
+      "duration_end": "31/07/2025"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021"
+    }
+  ],
+  "projects": [
+    "Developed REST APIs for a Fintech product, enhancing payment processing functionalities.",
+    "Created and managed REST APIs and database integrations to streamline merchant onboarding.",
+    "Developed front-end UI components and integrated backend services for a large-scale digital application.",
+    "Designed and implemented a web application from scratch, focusing on user authentication and secure data handling."
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-07-31 17:10:04.859826 ---
+{
+  "name": "Bilal Ranjha",
+  "skills": ["Python", "Django", "REST APIs", "Selenium", "PyautoGUI", "SQLite", "PostgreSQL", "Git", "GitHub", "Postman", "Django REST Framework", "Bootstrap", "BOT Development", "Web Scrapping", "HTML", "CSS", "Problem Solving"],
+  "education": [],
+  "work_experience": [],
+  "projects": ["YouTube Video Uploading BOT Using API", "Instagram Post Upload BOT Using API", "Twitter Post Upload BOT Using API", "Facebook Post Upload BOT Using Selenium || PyautoGUI", "Facebook Group Post Upload BOT Using Selenium || PyautoGUI", "Automatic Email Scraper Using Selenium", "Auto Email Sender BOT", "Animi Movies Website E-commerce", "Website Social Media Website ToDo (Django || HTML || CSS)", "Study Portal (Django || Html || CSS)", "Weather APP (Django || HTML || CSS)"],
+  "candidate_summary": "Hi, i am Bilal Ranjha. a Python & Django developer with front-end fluency (HTML/CSS/JS). Eager learner, results-oriented, and a team player.",
+  "work_experience_years": 0,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Grey Clean CV Resume Photo_1_1.pdf_20250124_121916_0000.pdf"
+}
+
+--- Response at 2025-07-31 17:10:27.089791 ---
+{
+  "name": "HAMMAD UR REHMAN",
+  "skills": ["C++", "Python", "HTML", "CSS", "C", "JavaScript", "PHP", "SQL", "TensorFlow", "scikit-learn", "PyTorch", "Angular", "GitLab", "MS Project", "Snort", "Nmap", "Aurora", "pfSense", "ZAP", "Problem-solving", "Time Management", "Communication"],
+  "education": ["Bachelor in Information Technology, Bahria University, Islamabad, Pakistan 2021 - 2025", "Intermediate, Fazaia Inter College E-9, Islamabad, Pakistan 2020", "Matriculation, Fazaia Inter College E-9, Islamabad, Pakistan 2018"],
+  "work_experience": [
+    {
+      "company_name": "Cyber Reconnaissance and Combat Center",
+      "job_title": "Cyber Security Blue Team Intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2024",
+      "duration_end": "31/09/2024"
+    },
+    {
+      "company_name": "Pakistan Air Force",
+      "job_title": "IT Specialist Intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "31/07/2024"
+    },
+    {
+      "company_name": "Ninjas Code Pvt Ltd",
+      "job_title": "SEO Specialist Intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2024",
+      "duration_end": "31/05/2024"
+    },
+    {
+      "company_name": "Sino Pak Center for Artificial Intelligence, PAF-IAST",
+      "job_title": "Computer Vision and Robotics Intern",
+      "job_location": "Haripur, Pakistan",
+      "duration_start": "01/07/2023",
+      "duration_end": "31/09/2023"
+    }
+  ],
+  "projects": ["Personal Portfolio Website", "Hospital Management System", "Air Quality in Nairobi", "Earthquake Damage Nepal", "Computer Network Design for Bahria University", "Bankruptcy in Poland", "Customer Churn Prediction", "Housing in Brazilian and Mexican Real Estate Markets", "A/B Testing at World Quant University", "Credit Card Fraud Detection", "Database Creation of University", "Sales Prediction System", "Book Recommendation System"],
+  "candidate_summary": "A highly motivated graduate from Bahria University with expertise in Artificial Intelligence, Web Development, Data Science, and Machine Learning. Seeking a challenging position where I can apply my technical knowledge and skills while contributing to innovative solutions and professional growth.",
+  "work_experience_years": 1,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\hammad_latex graduate CV.pdf"
+}
+
+--- Response at 2025-07-31 17:10:49.903320 ---
+{
+  "name": "SUFYAN ABDUL GHANI",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "Golang",
+    "Liferay",
+    "Hibernate",
+    "JPA",
+    "Mockito",
+    "JUnit",
+    "J2EE",
+    "Spring Cloud",
+    "MYSQL",
+    "PostgreSQL",
+    "AWS S3",
+    "Oracle",
+    "SQL Server",
+    "Redis",
+    "Microservices",
+    "Monolithic",
+    "MVC",
+    "EDA",
+    "MyBatis",
+    "CQRS",
+    "MongoDB",
+    "JWT",
+    "Role-Based Access Control",
+    "OAuth 2.0",
+    "Apache Kafka",
+    "RabbitMQ",
+    "TLS/SSL",
+    "Maven",
+    "Gradle",
+    "Docker",
+    "Kubernetes",
+    "GitHub",
+    "CI/CD",
+    "Terraform",
+    "Grafana",
+    "Jenkins",
+    "ArgoCD",
+    "Jira",
+    "REST",
+    "SOAP",
+    "GraphQL",
+    "WebSocket",
+    "JSON",
+    "AWS",
+    "Azure",
+    "GCP",
+    "Business Problem Solving",
+    "Time Management",
+    "Communication",
+    "Project Management",
+    "Team Leading",
+    "Teamwork"
+  ],
+  "education": [
+    "Bachelors in Computer Science & Information Technology at NED University of Engineering and Technology, Pakistan (2016 - 2020)"
+  ],
+  "work_experience": [
+    {
+      "company_name": "Small World Financial Services",
+      "job_title": "Backend Developer",
+      "job_location": "London, United Kingdom",
+      "duration_start": "01/08/2023",
+      "duration_end": "01/06/2024"
+    },
+    {
+      "company_name": "Corrtec (Private) Limited",
+      "job_title": "Software Engineer",
+      "job_location": "New Jersey, United States",
+      "duration_start": "01/05/2022",
+      "duration_end": "01/08/2023"
+    },
+    {
+      "company_name": "BenchMatrix",
+      "job_title": "Software Engineer",
+      "job_location": "Manama, Bahrain",
+      "duration_start": "01/06/2020",
+      "duration_end": "01/05/2022"
+    }
+  ],
+  "projects": [
+    "Certified Java Professional — Accredited by HRD-UAE, HMB-E University, Dubai",
+    "Java based Banking Application, managing customer accounts, transactions, and balance inquiries.",
+    "Real-time weather Data Pipeline leveraging Apache Kafka, Spark, and Java for fetching, storing, and visualizing data."
+  ],
+  "candidate_summary": "Experienced Backend Developer with strong skills in Java, Spring Boot, Docker, Kubernetes, and CI/CD pipelines. Has worked on projects that enhanced annual revenue and improved system reliability through microservices architecture and robust deployment processes. Holds a Bachelor's degree in Computer Science & Information Technology.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\SufyanGhaniResume.pdf"
+}
+
+--- Response at 2025-07-31 17:11:20.999302 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl", "debugging", "performance optimization", "mentoring", "jira", "jenkins", "bitbucket", "linux", "windows", "shell scripting", "agile", "scrum", "kanban", "restful apis", "web services", "net c#", "third-party integrations", "devops", "docker", "kubernetes", "containerization"],
+  "education": ["bachelor's degree", "computer science", "it"],
+  "work_experience": [],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-08-01 11:08:43.701005 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "start_date": "01/08/2019",
+      "end_date": "31/01/2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "01/08/2025",
+      "experience_years": 0.25
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "experience_years": 0.42
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, Tensorflow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, TypeScript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid is a software engineer with expertise in full-stack development, using technologies such as Angular, .NET Core, PostgreSQL, and AWS DevOps. He has contributed to the development of ERP systems and has experience with microservices architecture, RESTful APIs, and database normalization.",
+  "work_experience_years": 0,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-08-01 11:09:09.171090 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": ["Java", "HTML", "CSS", "JavaScript", "Python", "Spring Framework", "Spring Boot", "Hibernate", "Spring Cloud", "JSP", "Servlets", "Struts", "JSF", "REST", "SOAP", "Oracle", "MySQL", "NoSQL", "Microsoft SQL Server", "MariaDB", "Maven", "Gradle", "JUnit", "Postman", "SoapUI", "Swagger", "Git", "GitHub", "GitLab", "XML", "JSON", "Jira", "IntelliJ IDEA", "Eclipse", "PyCharm", "VS Code", "Windows", "Linux"],
+  "education": ["Bachelor's Degree in ICT, University of Sindh Jamshoro, Year of Graduation: 2018"],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/02/2024",
+      "duration_end": "01/08/2025"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021"
+    }
+  ],
+  "projects": [
+    "Fintech Product - First Pay",
+    "Merchant Portal and Onboarding System - Stc Pay",
+    "Etisalat Digital App Enhancement - Systems Limited",
+    "PCP Web Application - Evamp & Saanga Pvt Ltd"
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-08-01 11:09:33.346084 ---
+{
+  "name": "SU FYAN ABDUL GHANI",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "Golang",
+    "Liferay",
+    "Hibernate",
+    "JPA",
+    "Mockito",
+    "JUnit",
+    "J2EE",
+    "Spring Cloud",
+    "MYSQL",
+    "PostgreSQL",
+    "AWS S3",
+    "Oracle",
+    "SQL Server",
+    "Redis",
+    "Microservices",
+    "Monolithic",
+    "MVC",
+    "EDA",
+    "MyBatis",
+    "CQRS",
+    "MongoDB",
+    "JWT",
+    "Role-Based Access Control",
+    "OAuth 2.0",
+    "Apache Kafka",
+    "RabbitMQ",
+    "TLS/SSL",
+    "Maven",
+    "Gradle",
+    "Docker",
+    "Kubernetes",
+    "GitHub",
+    "CI/CD",
+    "Terraform",
+    "Grafana",
+    "Jenkins",
+    "ArgoCD",
+    "Jira",
+    "REST",
+    "SOAP",
+    "GraphQL",
+    "WebSocket",
+    "JSON",
+    "AWS",
+    "Azure",
+    "GCP"
+  ],
+  "education": [
+    {
+      "degree": "Bachelors in Computer Science & Information Technology",
+      "field": "Computer Science & Information Technology",
+      "institution": "NED University of Engineering and Technology",
+      "start_year": "2016",
+      "end_year": "2020"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "Small World Financial Services",
+      "job_title": "Backend Developer",
+      "job_location": "London, United Kingdom",
+      "duration_start": "01/08/2023",
+      "duration_end": "01/06/2024"
+    },
+    {
+      "company_name": "Corrtec (Private) Limited",
+      "job_title": "Software Engineer",
+      "job_location": "New Jersey, United States",
+      "duration_start": "01/05/2022",
+      "duration_end": "01/08/2023"
+    },
+    {
+      "company_name": "BenchMatrix",
+      "job_title": "Software Engineer",
+      "job_location": "Manama, Bahrain",
+      "duration_start": "01/06/2020",
+      "duration_end": "01/05/2022"
+    }
+  ],
+  "projects": [
+    "Certified Java Professional — Accredited by HRD-UAE, HMB-E University, Dubai",
+    "Java based Banking Application, managing customer accounts, transactions, and balance inquiries.",
+    "Real-time weather Data Pipeline leveraging Apache Kafka, Spark, and Java for fetching, storing, and visualizing data."
+  ],
+  "candidate_summary": "Experienced Software Engineer with a strong background in Java, Spring Boot, and microservices architecture. Demonstrated success in enhancing system scalability, reliability, and performance across various roles at Small World Financial Services, Corrtec (Private) Limited, and BenchMatrix. Skilled in containerization, CI/CD, and cloud services. Holds a Bachelor's degree in Computer Science & Information Technology from NED University of Engineering and Technology.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\SufyanGhaniResume.pdf"
+}
+
+--- Response at 2025-08-01 11:10:08.026749 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl certificates", "debugging", "linux/windows os", "shell scripting", "jira", "jenkins", "bitbucket", "restful apis", "web services", "net c#", "third-party integrations", "devops", "agile/scrum/kanban"],
+  "education": ["bachelor's degree in computer science", "bachelor's degree in it"],
+  "work_experience": [],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-08-01 11:32:24.155145 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "duration": "August 2019 - January 2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "01/08/2025",
+      "months_worked": 15
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "01/05/2024",
+      "months_worked": 5
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, Tensorflow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, Typescript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid is a Software Engineer with a Bachelor's degree in Computer Science from FAST NUCES. He has experience working as a Full Stack Developer and .NET Backend Developer, contributing to projects such as Quantus CRM and Healthcare ERP. His skills include Angular, .NET, PostgreSQL, and AWS CI/CD.",
+  "work_experience_years": 2,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-08-01 11:32:53.481755 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": [
+    "Java",
+    "Spring Framework",
+    "Spring Boot",
+    "Hibernate",
+    "Spring Cloud",
+    "JSP",
+    "Servlets",
+    "Struts",
+    "JSF",
+    "REST",
+    "SOAP",
+    "Oracle",
+    "MySQL",
+    "NoSQL",
+    "Microsoft SQL Server",
+    "MariaDB",
+    "Maven",
+    "Gradle",
+    "JUnit",
+    "Postman",
+    "SoapUI",
+    "Swagger",
+    "Git",
+    "GitHub",
+    "GitLab",
+    "XML",
+    "JSON",
+    "Jira",
+    "IntelliJ IDEA",
+    "Eclipse",
+    "PyCharm",
+    "VS Code",
+    "Windows",
+    "Linux"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's Degree in ICT",
+      "field": "ICT",
+      "institution": "University of Sindh Jamshoro",
+      "year_of_graduation": 2018
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/02/2024",
+      "duration_end": "01/08/2025"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021"
+    }
+  ],
+  "projects": [
+    {
+      "project_name": "Fintech Product",
+      "description": "Developed REST APIs for a Fintech product, enhancing payment processing functionalities."
+    },
+    {
+      "project_name": "Merchant Portal and Onboarding System",
+      "description": "Created and managed REST APIs and database integrations to streamline merchant onboarding."
+    },
+    {
+      "project_name": "Etisalat Digital App Enhancement",
+      "description": "Developed front-end UI components and integrated backend services for a large-scale digital application."
+    },
+    {
+      "project_name": "PCP Web Application",
+      "description": "Designed and implemented a web application from scratch, focusing on user authentication and secure data handling."
+    }
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-08-01 11:33:19.028125 ---
+{
+  "name": "SUFYAN ABDUL GHANI",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "Golang",
+    "Liferay",
+    "Hibernate",
+    "JPA",
+    "Mockito",
+    "JUnit",
+    "J2EE",
+    "Spring Cloud",
+    "MYSQL",
+    "PostgreSQL",
+    "AWS S3",
+    "Oracle",
+    "SQL Server",
+    "Redis",
+    "Microservices",
+    "Monolithic",
+    "MVC",
+    "EDA",
+    "MyBatis",
+    "CQRS",
+    "MongoDB",
+    "JWT",
+    "Role-Based Access Control",
+    "OAuth 2.0",
+    "Apache Kafka",
+    "RabbitMQ",
+    "TLS/SSL",
+    "Maven",
+    "Gradle",
+    "Docker",
+    "Kubernetes",
+    "GitHub",
+    "CI/CD",
+    "Terraform",
+    "Grafana",
+    "Jenkins",
+    "ArgoCD",
+    "Jira",
+    "REST",
+    "SOAP",
+    "GraphQL",
+    "WebSocket",
+    "JSON",
+    "AWS",
+    "Azure",
+    "GCP",
+    "Business Problem Solving",
+    "Time Management",
+    "Communication",
+    "Project Management",
+    "Team Leading",
+    "Teamwork"
+  ],
+  "education": [
+    {
+      "degree": "Bachelors",
+      "field": "Computer Science & Information Technology",
+      "institution": "NED University of Engineering and Technology, Pakistan",
+      "years": "2016 - 2020"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "Small World Financial Services",
+      "job_title": "Backend Developer",
+      "job_location": "London, United Kingdom",
+      "duration_start": "01/08/2023",
+      "duration_end": "01/06/2024"
+    },
+    {
+      "company_name": "Corrtec (Private) Limited",
+      "job_title": "Software Engineer",
+      "job_location": "New Jersey, United States",
+      "duration_start": "01/05/2022",
+      "duration_end": "01/08/2023"
+    },
+    {
+      "company_name": "BenchMatrix",
+      "job_title": "Software Engineer",
+      "job_location": "Manama, Bahrain",
+      "duration_start": "01/06/2020",
+      "duration_end": "01/05/2022"
+    }
+  ],
+  "projects": [
+    "Certified Java Professional — Accredited by HRD-UAE, HMB-E University, Dubai - https://feji.us/mindf7",
+    "Java based Banking Application, managing customer accounts, transactions, and balance inquiries.",
+    "Real-time weather Data Pipeline leveraging Apache Kafka, Spark, and Java for fetching, storing, and visualizing data."
+  ],
+  "candidate_summary": "Sufyan Abdul Ghani has worked as a Backend Developer at Small World Financial Services, a Software Engineer at Corrtec (Private) Limited, and BenchMatrix. He has contributed to various projects including developing Corrtec’s flagship product, Trade Asset Risk Management, and setting up comprehensive monitoring and alerting systems. His technical skills include Java, Spring Boot, Golang, and several other languages and frameworks. He also holds a Bachelor's degree in Computer Science & Information Technology from NED University of Engineering and Technology.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\SufyanGhaniResume.pdf"
+}
+
+--- Response at 2025-08-01 11:33:40.768683 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl certificates", "debugging", "backend applications", "junior developer mentoring", "jira", "jenkins", "bitbucket", "linux", "windows os", "shell scripting", "agile", "scrum", "kanban", "restful apis", "web services", "net c#", "third-party integrations", "devops", "problem-solving", "communication", "collaboration"],
+  "education": ["bachelor’s degree", "computer science", "it"],
+  "work_experience": ["backend development", "java spring boot", "task management", "ci/cd"],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-08-01 11:44:08.277995 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "duration": "August 2019 - January 2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "01/08/2025",
+      "months": 15
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "months": 6
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, TensorFlow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, TypeScript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid is a Software Engineer with a Bachelor of Science in Computer Science from FAST NUCES. He has experience in full-stack development using technologies such as Angular, .NET, and PostgreSQL. His recent role at IntegCubes involved developing RESTful APIs and integrating third-party services. At Merik Solutions, he contributed to the backend development of a healthcare ERP system.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-08-01 11:44:34.766884 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": [
+    "Java",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Python",
+    "Spring Framework",
+    "Spring Boot",
+    "Hibernate",
+    "Spring Cloud",
+    "JSP",
+    "Servlets",
+    "Struts",
+    "JSF",
+    "REST",
+    "SOAP",
+    "Oracle",
+    "MySQL",
+    "NoSQL",
+    "Microsoft SQL Server",
+    "MariaDB",
+    "Maven",
+    "Gradle",
+    "JUnit",
+    "Postman",
+    "SoapUI",
+    "Swagger",
+    "Git",
+    "GitHub",
+    "GitLab",
+    "XML",
+    "JSON",
+    "Jira",
+    "IntelliJ IDEA",
+    "Eclipse",
+    "PyCharm",
+    "VS Code",
+    "Windows",
+    "Linux"
+  ],
+  "education": [
+    "Bachelor's Degree in ICT, University of Sindh Jamshoro, Year of Graduation: 2018"
+  ],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/02/2024",
+      "duration_end": "01/08/2025"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021"
+    }
+  ],
+  "projects": [
+    "Fintech Product - First Pay",
+    "Merchant Portal and Onboarding System - Stc Pay",
+    "Etisalat Digital App Enhancement - Systems Limited",
+    "PCP Web Application - Evamp & Saanga Pvt Ltd"
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-08-01 11:44:58.954407 ---
+{
+  "name": "SU FYAN ABDUL GHANI",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "Golang",
+    "Liferay",
+    "Hibernate",
+    "JPA",
+    "Mockito",
+    "JUnit",
+    "J2EE",
+    "Spring Cloud",
+    "MYSQL",
+    "PostgreSQL",
+    "AWS S3",
+    "Oracle",
+    "SQL Server",
+    "Redis",
+    "Microservices",
+    "Monolithic",
+    "MVC",
+    "EDA",
+    "MyBatis",
+    "CQRS",
+    "MongoDB",
+    "JWT",
+    "Role-Based Access Control",
+    "OAuth 2.0",
+    "Apache Kafka",
+    "RabbitMQ",
+    "TLS/SSL",
+    "Maven",
+    "Gradle",
+    "Docker",
+    "Kubernetes",
+    "GitHub",
+    "CI/CD",
+    "Terraform",
+    "Grafana",
+    "Jenkins",
+    "ArgoCD",
+    "Jira",
+    "REST",
+    "SOAP",
+    "GraphQL",
+    "WebSocket",
+    "JSON",
+    "AWS",
+    "Azure",
+    "GCP",
+    "Business Problem Solving",
+    "Time Management",
+    "Communication",
+    "Project Management",
+    "Team Leading",
+    "Teamwork"
+  ],
+  "education": [
+    "Bachelors in Computer Science & Information Technology at NED University of Engineering and Technology, Pakistan (2016 - 2020)"
+  ],
+  "work_experience": [
+    {
+      "company_name": "Small World Financial Services",
+      "job_title": "Backend Developer",
+      "job_location": "London, United Kingdom",
+      "duration_start": "01/08/2023",
+      "duration_end": "01/06/2024"
+    },
+    {
+      "company_name": "Corrtec (Private) Limited",
+      "job_title": "Software Engineer",
+      "job_location": "New Jersey, United States",
+      "duration_start": "01/05/2022",
+      "duration_end": "01/08/2023"
+    },
+    {
+      "company_name": "BenchMatrix",
+      "job_title": "Software Engineer",
+      "job_location": "Manama, Bahrain",
+      "duration_start": "01/06/2020",
+      "duration_end": "01/05/2022"
+    }
+  ],
+  "projects": [
+    "Certified Java Professional — Accredited by HRD-UAE, HMB-E University, Dubai - https://feji.us/mindf7",
+    "Java based Banking Application, managing customer accounts, transactions, and balance inquiries.",
+    "Real-time weather Data Pipeline leveraging Apache Kafka, Spark, and Java for fetching, storing, and visualizing data."
+  ],
+  "candidate_summary": "Sufyan Abdul Ghani has extensive experience in backend development and software engineering, with a focus on Java, Spring Boot, and cloud-based solutions. He has contributed to projects that enhance system reliability, improve operational efficiency, and meet regulatory compliance requirements. His technical skills encompass a wide range of languages, frameworks, databases, and DevOps tools.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\SufyanGhaniResume.pdf"
+}
+
+--- Response at 2025-08-01 11:45:17.091897 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl certificates", "debugging", "linux/windows os", "shell scripting", "jira", "jenkins", "bitbucket", "agile/scrum/kanban", "restful apis", "web services", ".net c#", "third-party integrations", "devops", "problem-solving", "communication", "collaboration", "aws", "azure", "gcp", "docker", "kubernetes", "containerization"],
+  "education": ["bachelor's degree in computer science", "bachelor's degree in it"],
+  "work_experience": [],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-08-01 11:49:07.051184 ---
+{
+  "name": "Abdullah Khalid",
+  "skills": [
+    "C#",
+    "JavaScript",
+    "SQL",
+    "Python",
+    "C",
+    "C++",
+    "HTML",
+    "CSS",
+    "Angular",
+    "Angular Material",
+    "PrimeNG",
+    "Tailwind",
+    "Bootstrap",
+    "Docker",
+    "Git/GitHub",
+    "CI/CD",
+    "AWS:DevOps",
+    ".NET",
+    "MSSQL Server",
+    "PostgreSQL",
+    "Entity Framework",
+    "Identity Framework",
+    "MVC",
+    "LINQ",
+    "RESTful APIs",
+    "gRPC",
+    "signalR",
+    "Clean Architecture",
+    "Microservices Architecture",
+    "Design Patterns",
+    "SOLID Principles",
+    "Database Normalization",
+    "Query Optimization",
+    "Agile Methodology",
+    "SCRUM",
+    "Software Design",
+    "Unit of Work",
+    "CQRS"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science (BSCS)",
+      "field": "Computer Science",
+      "institution": "FAST NUCES",
+      "location": "Islamabad, Pakistan",
+      "start_date": "01/08/2019",
+      "end_date": "31/01/2024"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "IntegCubes",
+      "job_title": "Software Engineer - Full Stack Developer (Angular + .NET)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/05/2024",
+      "duration_end": "01/08/2025",
+      "job_description": "Contributing to the development of Quantus, a comprehensive ERP product with modules including CRM, HRM, & Supply Chain Management. Full stack development using Angular for frontend, .NET Core with Clean Architecture for backend & PostgreSQL. Developing RESTful APls, writing complex SQL stored procedures for CRM reports. Integrated third-party APIs, including Meta Ads, Google AdSense, & Stripe Payment Gateway. Implemented authentication/authorization & hierarchical access control (Role-based Access) using Identity Framework Core & ActionFilters. Implemented AWS CI/CD pipeline, automating the deployment process & reducing deployment time by over 50%."
+    },
+    {
+      "company_name": "Merik Solutions",
+      "job_title": ".NET Backend Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/12/2023",
+      "duration_end": "31/05/2024",
+      "job_description": "Contributed to the backend development of a Healthcare ERP built on a microservices architecture using .NET Core 6.0, hosted on Azure Kubernetes Service. Designed & implemented RESTful APls, conducted testing using Postman & wrote unit tests using xUnit. Utilized EF Core as the ORM for efficient management of relational data in SQL Server. Developed the feature of Live Dashboards & Live Notifications using SignalR."
+    }
+  ],
+  "projects": [
+    "Quantus CRM — Clean Architecture, .NET Core, EF Core, IdentityFramework, Angular, IIS, AWS CI/CD, PostgreSQL",
+    "Healthcare ERP — Microservices Architecture, .NET Core, EF-Core, MSSQL Server",
+    "NASCON Event Management System — .NET WebForms",
+    "Groc-POS (Final Year Project, AI-Powered POS Mobile App) — Flutter, TensorFlow, Firebase, Roboflow",
+    "Recipe-Rite — Angular, TypeScript",
+    "Health System App — .NET Core 8.0 WebAPI"
+  ],
+  "candidate_summary": "Abdullah Khalid is a Software Engineer with experience in Full Stack Development using Angular and .NET. He has contributed to the development of comprehensive ERP products and Healthcare ERPs. His skills include Clean Architecture, Microservices Architecture, Design Patterns, and Agile Methodology.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdullah_Khalid_Resume_Latex.pdf"
+}
+
+--- Response at 2025-08-01 11:49:37.446405 ---
+{
+  "name": "Ghulam Abbas",
+  "skills": [
+    "Java",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Python",
+    "Spring Framework",
+    "Spring Boot",
+    "Hibernate",
+    "Spring Cloud",
+    "JSP",
+    "Servlets",
+    "Struts",
+    "JSF",
+    "REST",
+    "SOAP",
+    "Oracle",
+    "MySQL",
+    "NoSQL",
+    "Microsoft SQL Server",
+    "MariaDB",
+    "Maven",
+    "Gradle",
+    "JUnit",
+    "Postman",
+    "SoapUI",
+    "Swagger",
+    "Git",
+    "GitHub",
+    "GitLab",
+    "XML",
+    "JSON",
+    "Jira",
+    "IntelliJ IDEA",
+    "Eclipse",
+    "PyCharm",
+    "VS Code",
+    "Windows",
+    "Linux"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's Degree in ICT",
+      "field": "ICT",
+      "institution": "University of Sindh Jamshoro",
+      "year_of_graduation": "2018"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "HBL Microfinance Bank",
+      "job_title": "Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/02/2024",
+      "duration_end": "01/08/2025"
+    },
+    {
+      "company_name": "Stc Pay",
+      "job_title": "Java Developer",
+      "job_location": "Riyadh, KSA",
+      "duration_start": "01/09/2023",
+      "duration_end": "30/11/2023"
+    },
+    {
+      "company_name": "Systems Limited",
+      "job_title": "Software Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/03/2023",
+      "duration_end": "31/08/2023"
+    },
+    {
+      "company_name": "Evamp & Saanga Pvt Ltd",
+      "job_title": "Associate Java Developer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/07/2021",
+      "duration_end": "28/02/2023"
+    },
+    {
+      "company_name": "Arittek Software Solutions Pvt Ltd",
+      "job_title": "Junior Java Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/02/2019",
+      "duration_end": "30/06/2021"
+    }
+  ],
+  "projects": [
+    {
+      "project_name": "Fintech Product",
+      "description": "Developed REST APIs for a Fintech product, enhancing payment processing functionalities."
+    },
+    {
+      "project_name": "Merchant Portal and Onboarding System",
+      "description": "Created and managed REST APIs and database integrations to streamline merchant onboarding."
+    },
+    {
+      "project_name": "Etisalat Digital App Enhancement",
+      "description": "Developed front-end UI components and integrated backend services for a large-scale digital application."
+    },
+    {
+      "project_name": "PCP Web Application",
+      "description": "Designed and implemented a web application from scratch, focusing on user authentication and secure data handling."
+    }
+  ],
+  "candidate_summary": "Detail-oriented Java Developer with over 5 years of experience in designing, developing, and maintaining scalable applications across diverse platforms. Expertise in Java, Spring Framework, and RESTful web services, with a strong background in frontend technologies and Agile methodologies. Proven ability to deliver high-quality solutions on time while providing exceptional technical support in cross-functional team environments.",
+  "work_experience_years": 5,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ghulam Abbas (1).pdf"
+}
+
+--- Response at 2025-08-01 11:50:00.113386 ---
+{
+  "name": "SUFYAN ABDUL GHANI",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "Golang",
+    "Liferay",
+    "Hibernate",
+    "JPA",
+    "Mockito",
+    "JUnit",
+    "J2EE",
+    "Spring Cloud",
+    "MYSQL",
+    "PostgreSQL",
+    "AWS S3",
+    "Oracle",
+    "SQL Server",
+    "Redis",
+    "Microservices",
+    "Monolithic",
+    "MVC",
+    "EDA",
+    "MyBatis",
+    "CQRS",
+    "MongoDB",
+    "JWT",
+    "Role-Based Access Control",
+    "OAuth 2.0",
+    "Apache Kafka",
+    "RabbitMQ",
+    "TLS/SSL",
+    "Maven",
+    "Gradle",
+    "Docker",
+    "Kubernetes",
+    "GitHub",
+    "CI/CD",
+    "Terraform",
+    "Grafana",
+    "Jenkins",
+    "ArgoCD",
+    "Jira",
+    "REST",
+    "SOAP",
+    "GraphQL",
+    "WebSocket",
+    "JSON",
+    "AWS",
+    "Azure",
+    "GCP"
+  ],
+  "education": [
+    "Bachelors in Computer Science & Information Technology at NED University of Engineering and Technology, Pakistan (2016 - 2020)"
+  ],
+  "work_experience": [
+    {
+      "company_name": "Small World Financial Services",
+      "job_title": "Backend Developer",
+      "job_location": "London, United Kingdom",
+      "duration_start": "01/08/2023",
+      "duration_end": "01/06/2024"
+    },
+    {
+      "company_name": "Corrtec (Private) Limited",
+      "job_title": "Software Engineer",
+      "job_location": "New Jersey, United States",
+      "duration_start": "01/05/2022",
+      "duration_end": "01/08/2023"
+    },
+    {
+      "company_name": "BenchMatrix",
+      "job_title": "Software Engineer",
+      "job_location": "Manama, Bahrain",
+      "duration_start": "01/06/2020",
+      "duration_end": "01/05/2022"
+    }
+  ],
+  "projects": [
+    "Certified Java Professional — Accredited by HRD-UAE, HMB-E University, Dubai",
+    "Java based Banking Application, managing customer accounts, transactions, and balance inquiries.",
+    "Real-time weather Data Pipeline leveraging Apache Kafka, Spark, and Java for fetching, storing, and visualizing data."
+  ],
+  "candidate_summary": "Sufyan Abdul Ghani has worked as a Backend Developer at Small World Financial Services and Software Engineer at Corrtec and BenchMatrix. He has developed systems using Java, Spring Boot, and other frameworks, and has experience with CI/CD, containerization, and cloud services.",
+  "work_experience_years": 3,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\SufyanGhaniResume.pdf"
+}
+
+--- Response at 2025-08-01 11:50:30.299598 ---
+{
+  "name": "",
+  "skills": ["java", "spring boot", "spring jpa/hibernate", "spring security", "mysql", "oracle", "ssl", "backend development", "linux/windows os", "shell scripting", "agile/scrum/kanban", "restful apis", "web services", ".net c#", "third-party integrations", "devops", "problem-solving", "debugging", "communication", "collaboration"],
+  "education": ["bachelor's degree", "computer science", "it"],
+  "work_experience": ["backend development with java spring boot", "task management with jira", "ci/cd with jenkins and bitbucket", "secure data transmission with ssl", "relational database schemas design and optimization", "mentoring junior developers"],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+
+--- Response at 2025-08-01 12:01:30.871935 ---
+{
+  "name": "Talha Ahmed",
+  "skills": [
+    "ReactJS",
+    "CSS",
+    "VueJS",
+    "Angular",
+    "HTML",
+    "NextJS",
+    "Bootstrap",
+    "Back-End",
+    "MongoDB",
+    "PostgreSQL",
+    "MySQL",
+    "NodeJs",
+    "ExpressJs",
+    "REST",
+    "Postman",
+    "JavaScript",
+    "TypeScript",
+    "DevOps",
+    "Github Actions",
+    "Jenkins",
+    "Docker",
+    "Git",
+    "JSON",
+    "Webpack5",
+    "Unit Testing",
+    "jest library",
+    "WordPress"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science & Information Technology",
+      "field": "Computer Science & Information Technology",
+      "institution": "NED University of Engineering & Technology",
+      "location": "Karachi, Pakistan",
+      "graduation_date": "Date"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "Dubizzlelabs",
+      "job_title": "Web Developer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/10/2024",
+      "duration_end": "01/08/2025",
+      "experience_years": 0.75
+    },
+    {
+      "company_name": "Nisum",
+      "job_title": "Software Engineer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/05/2022",
+      "duration_end": "01/10/2024",
+      "experience_years": 2.42
+    },
+    {
+      "company_name": "Indus Valley",
+      "job_title": "Associate Software Engineer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/04/2021",
+      "duration_end": "01/07/2021",
+      "experience_years": 0.25
+    },
+    {
+      "company_name": "Blockshift Technologies",
+      "job_title": "Associate Software Engineer",
+      "job_location": "Karachi, Pakistan",
+      "duration_start": "01/09/2020",
+      "duration_end": "01/02/2021",
+      "experience_years": 0.33
+    }
+  ],
+  "projects": [],
+  "candidate_summary": "Talha Ahmed is a proactive and results-driven front-end developer with a strong track record of delivering high-quality, scalable solutions and flawless user experiences. He has extensive experience working with HTML, CSS, JavaScript, VueJS, Angular, and other front-end technologies. His contributions have led to significant improvements in system performance and overall productivity.",
+  "work_experience_years": 3.75,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\#1TalhaAhmedResumes.pdf"
+}
+
+--- Response at 2025-08-01 12:02:03.381621 ---
+{
+  "name": "Abdul Hanan",
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "Python",
+    "React.js",
+    "Next.js",
+    "Tailwind CSS",
+    "Bootstrap",
+    "Redux",
+    "Redux Toolkit",
+    "FastAPI",
+    "Flask",
+    "MS SQL",
+    "SQL Server",
+    "MySQL",
+    "PostgreSQL",
+    "MongoDB",
+    "Git",
+    "Leadership",
+    "Collaboration",
+    "Problem Solving",
+    "Multitasking",
+    "Emotional Intelligence",
+    "Adaptability",
+    "Proficient English",
+    "Public Speaking"
+  ],
+  "education": [
+    "MS Computer Sciences (MSCS)",
+    "National University of Sciences and Technology (NUST)",
+    "Master in Computer Science (MCS)",
+    "Bahauddin Zakariya University"
+  ],
+  "work_experience": [
+    {
+      "company_name": "Tekrowe Digital",
+      "job_title": "Front-end Engineer",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/11/2021",
+      "duration_end": "01/08/2025",
+      "job_description": "Collaborate with designers and backend developers to translate UI/UX design wireframes into responsive, interactive web and mobile applications. Develop and maintain frontend components and features using modern web technologies such as HTML5, CSS, JavaScript (ES6+), and frameworks like React, Next. Ensure the technical feasibility of UI/UX designs and optimize application performance for maximum speed and scalability."
+    },
+    {
+      "company_name": "Tekrowe Digital",
+      "job_title": "Software engineering intern",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "01/08/2022",
+      "duration_end": "30/10/2022",
+      "job_description": "Actively engaged in a dynamic learning environment, absorbing knowledge and skills from experienced team members in software engineering. Participated in projects within the Medicare industry as a frontend engineer, leveraging mentorship opportunities to enhance understanding of industry-specific challenges and requirements."
+    }
+  ],
+  "projects": [
+    {
+      "project_name": "Speetar",
+      "duration_start": "01/08/2022",
+      "duration_end": "15/05/2023",
+      "description": "Contributed to enhancing the Speetar telehealth platform, a leading solution connecting Libyan patients with doctors worldwide, offering accessible healthcare services including online consultations and digital medical records."
+    },
+    {
+      "project_name": "Aplahub",
+      "duration_start": "16/05/2023",
+      "duration_end": "01/08/2025",
+      "description": "Contributed to the development of AplaHub, an innovative cloud-based accounting platform designed for small accounting and bookkeeping firms."
+    },
+    {
+      "project_name": "Vendor Search - Chrome Extension",
+      "duration_start": "01/07/2024",
+      "duration_end": "10/08/2024",
+      "description": "Designed and implemented a Chrome extension to enhance vendor information retrieval for QuickBooks users, improving the overall user experience and efficiency of vendor management."
+    }
+  ],
+  "candidate_summary": "Driven Frontend Engineer with a solid foundation in frontend technologies and a proficiency in backend development using Python, including AI and Gen AI applications. Skilled in crafting visually appealing and intuitive Desktop and Web Applications that prioritize user experience. Proven collaborator with a positive attitude towards teamwork and a passion for pushing the boundaries of frontend innovation.",
+  "work_experience_years": 3.9,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\ABDUL_HANAN_Resume.pdf"
+}
+
+--- Response at 2025-08-01 12:02:18.258128 ---
+{
+  "name": "SYED ABDUR REHMAN SHIRAZI",
+  "skills": [
+    "Reactjs",
+    "Javascript",
+    "React Query",
+    "Material UI",
+    "Nextjs",
+    "Redux",
+    "Tailwind CSS",
+    "Figma",
+    "Typescript",
+    "Zustand",
+    "Bootstrap",
+    "Wordpress"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor in Computer Science",
+      "field": "Computer Science",
+      "institution": "COMSATS University, Wah Campus",
+      "duration": "May 2016 - May 2020"
+    }
+  ],
+  "work_experience": [
+    {
+      "company_name": "Bleed Al",
+      "job_title": "Frontend Developer",
+      "job_location": "Remote",
+      "duration_start": "01/05/2023",
+      "duration_end": "01/08/2025",
+      "duration_years": 2.28
+    },
+    {
+      "company_name": "Linknbit",
+      "job_title": "Frontend Developer",
+      "job_location": null,
+      "duration_start": "01/03/2023",
+      "duration_end": "30/04/2023",
+      "duration_years": 0.17
+    }
+  ],
+  "projects": [
+    "Grammie Al",
+    "UpAutomate"
+  ],
+  "candidate_summary": "Software Engineer with 2 years of experience in custom frontend development, specializing in Next.js, React.js, Tailwind CSS, and ShadCN. Skilled in building high-performance, scalable web applications with optimized UI/UX. Passionate about crafting clean, maintainable code and enhancing system efficiency.",
+  "work_experience_years": 2.45,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Abdur-Rehman.pdf"
+}
+
+--- Response at 2025-08-01 12:02:34.014548 ---
+{
+  "name": "Abubakar Jilani",
+  "skills": ["ReactJS", "Redux", "Context API", "Bootstrap", "Material UI", "Ant Design", "NodeJS", "ExpressJS", "Moengage", "Jira", "Bitbucket", "Firebase", "Jenkins", "NextJS", "Twilio", "Stripe", "SQL", "MongoDB"],
+  "education": ["Bachelor in Computer Science, PMAS Arid Agriculture University (BIIT), CGPA: 3.4 out of 4, Rawalpindi, Pakistan"],
+  "work_experience": [
+    {
+      "company_name": "www.mercurialminds.com (OTT-TAMASHA)",
+      "job_title": "Senior Software Engineer (On Site)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "12/2023",
+      "duration_end": "01/08/2025"
+    },
+    {
+      "company_name": "www.offsetup.com",
+      "job_title": "Frontend Engineer (On Site)",
+      "job_location": "Islamabad, Pakistan",
+      "duration_start": "06/2021",
+      "duration_end": "12/2023"
+    }
+  ],
+  "projects": ["www.tamashaweb.com (React Js / Node Js / Bootstrap)", "www.365sol.com (Next Js / Node JS / Material UI)", "www.florida-beachrentals.com (React JS / Material UI)", "Tamasha Subscription pages (React JS / Bootstrap)"],
+  "candidate_summary": "Highly motivated and adaptive Software Engineer with strong skills in communication, problem-solving, logic, and analytical thinking. Has developed and maintained high-traffic products and worked closely with stakeholders and designers. Experienced in training and developing frontend teams and version control using Git and Bitbucket.",
+  "work_experience_years": 4.2,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\AbubakarJilaniResume.pdf"
+}
+
+--- Response at 2025-08-01 12:02:53.809795 ---
+{
+  "name": "Ahmad Fahim",
+  "skills": [
+    "Html/Css",
+    "NextJS",
+    "Javascript",
+    "Vercel",
+    "React",
+    "Firebase",
+    "React native",
+    "Push Notifications",
+    "TailwindCss",
+    "Python/Django",
+    "Git/Github",
+    "Ant Design",
+    "Netlify",
+    "3rd party Api’s"
+  ],
+  "education": [
+    "Cadet college warsak peshawar - Matriculation",
+    "Islamia college peshawar - Fse",
+    "Comsats University - Bachelor of Science, in Telecommunication and networking. Majors in Computer Science"
+  ],
+  "work_experience": [
+    {
+      "company_name": "BLS Solutions",
+      "job_title": "NextJS Developer",
+      "job_location": null,
+      "duration_start": "02/2023",
+      "duration_end": "01/08/2025",
+      "responsibilities": [
+        "Designed and integrated decentralized App.",
+        "Integrated blockchain Live Data.",
+        "Implemented Defi concepts.",
+        "Revamped complete Frontend of BLS website."
+      ]
+    },
+    {
+      "company_name": "BLS Solutions",
+      "job_title": "React Native Developer",
+      "job_location": null,
+      "duration_start": "02/2023",
+      "duration_end": "01/08/2025",
+      "responsibilities": [
+        "Build responsive applications both Android and IOS",
+        "Successfully implemented features such as camera, notifications, payments etc.",
+        "Utilized react native debugging tools such as reactotron for debugging and bugs fixing",
+        "Key Achievement: Developed production ready mobile apps."
+      ]
+    },
+    {
+      "company_name": "Relymer Pvt Ltd",
+      "job_title": "Jr. Frontend developer",
+      "job_location": null,
+      "duration_start": "08/2021",
+      "duration_end": "02/2023",
+      "responsibilities": [
+        "Manage Websites, Dashboards, and Landing Pages from concept to Deployment",
+        "Access UI & UX designs for technical Feasibility",
+        "Responsive web interface and applications for blockchain",
+        "Key Achievement: Developed a web3 based application which profited company a lot."
+      ]
+    }
+  ],
+  "projects": [],
+  "candidate_summary": "A results-driven and tech-savvy professional with extensive experience in web and mobile development, specializing in React, React Native, and Nextjs. Eager to tackle challenging roles in a dynamic, forward-thinking organization where I can leverage my skills and knowledge to drive innovation and contribute to the organization's success.",
+  "work_experience_years": 2.75,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ahmad-Frontend-Resume.pdf"
+}
+
+--- Response at 2025-08-01 12:03:18.055083 ---
+{
+  "name": "ALI HAMZA",
+  "skills": ["HTML5", "CSS", "JavaScript", "TypeScript", "React.js", "Next.js", "Node.js", "React Native", "Redux Toolkit", "React Query", "MobX", "MobX State Tree", "Context API", "Express.js", "Socket.io", "SCSS", "Bootstrap", "Tailwind", "Ant Design", "Material UI", "Git", "GitLab", "GitHub", "VS Code", "MongoDB", "GraphQL"],
+  "education": ["BSc Computer Science, Islamia University Bahawalpur"],
+  "work_experience": [
+    {
+      "company_name": "Ez Wage Pvt Ltd",
+      "job_title": "Next Js Developer",
+      "job_location": "Lahore, Punjab Pakistan",
+      "duration_start": "01/01/2024",
+      "duration_end": "01/08/2025",
+      "job_description": "Developed a highly responsive and user-friendly real estate application with advanced property listings, robust search filters, and real-time property location tracking using Google Maps API. Leveraged Next.js SSR and SSG capabilities for fast page load times and improved SEO. Implemented image optimization, lazy loading, and caching strategies."
+    },
+    {
+      "company_name": "Enigmatix Pvt Ltd",
+      "job_title": "React & Next JS Developer",
+      "job_location": "Bahawalpur, Punjab Pakistan",
+      "duration_start": "01/01/2022",
+      "duration_end": "01/01/2024",
+      "job_description": "Developed robust, scalable web applications using React.js and Next.js. Managed server state with React Query for improved data fetching and overall application performance. Specialized in state management using Redux Toolkit, MobX, and Context API. Built dynamic, reusable components and optimized performance using React hooks and advanced state management techniques. Collaborated with backend teams for seamless API integration."
+    }
+  ],
+  "projects": [
+    {
+      "project_name": "Office Management System",
+      "technologies_used": ["React.js", "Bootstrap", "Python", "Firebase", "Styled Components", "MobX State Tree"]
+    },
+    {
+      "project_name": "Ecommerce FurniCraft",
+      "technologies_used": ["Next.js", "TypeScript", "Redux Toolkit", "SCSS", "React Query"]
+    },
+    {
+      "project_name": "Rent Round",
+      "technologies_used": ["Next.js", "React Query", "Redux Toolkit", "Python", "SCSS"]
+    }
+  ],
+  "candidate_summary": "Ali Hamza is a skilled React & Next JS Developer with experience in developing robust, scalable web applications. He has expertise in HTML5, CSS, JavaScript, TypeScript, React.js, Next.js, Node.js, React Native, Redux Toolkit, React Query, MobX, Context API, and various other libraries and tools. His work experience includes developing real estate and e-commerce platforms, focusing on performance optimization and user experience.",
+  "work_experience_years": 2.67,
+  "filepath": "C:\\Users\\Azeem\\Documents\\CARE\\Intelligent-Resume-Filtering\\Uploaded_Files\\Ali_Hamza_Resume.pdf"
+}
+
+--- Response at 2025-08-01 12:04:51.096566 ---
+{
+  "name": "",
+  "skills": ["react", "redux", "javascript", "html5", "css3", "material ui", "git", "restful apis", "typescript", "jest", "mocha", "responsive design", "ci/cd"],
+  "education": ["bscs"],
+  "work_experience": [],
+  "projects": [],
+  "candidate_summary": "",
+  "work_experience_years": 3,
+  "filepath": ""
+}
+

@@ -11,8 +11,8 @@ from qdrant_client.models import PointStruct, Distance, VectorParams
 from collections import defaultdict
 from datetime import datetime
 import pytesseract
+import tiktoken 
 from pdf2image import convert_from_path
-import re
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 current_date_str = datetime.today().strftime("%d %b %Y") 
 
@@ -27,7 +27,7 @@ class ResumeInfo(BaseModel):
     work_experience: list = []
     projects: list = []
     candidate_summary: str
-    work_experience_years: int
+    work_experience_years: float
     filepath: str
 #---------------------------------------------------------------------
 # Function to extract text from PDF using OCR
@@ -387,72 +387,90 @@ Analyze the candidates with respect to the job description and:
         return f"Error in analysis: {str(e)}"
 #-----------------------------------------------------------------------------------------
 
-def estimate_tokens(text):
-    if not isinstance(text, str):
-        return 0
-    num_chars = len(text)
-    num_words = len(text.split())
 
-    # Average between char- and word-based estimates
-    token_estimate = (num_chars / 4 + num_words / 0.75) / 2
-    return int(token_estimate)
+def estimate_tokens(text, model="Qwen/Qwen2.5-32B-Instruct-AWQ"):
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+        return len(encoding.encode(text))
+    except:
+        # Fallback: ~1 token = 4 characters
+        return max(20, int(len(text) / 4))
 
 
 #----------------------------------------------------------------------------------------------
-# Function to truncate chat history to fit within token limits
-def truncate_history(chat_history, max_tokens=3500, preserve_head=1, preserve_tail=3):
- 
-    if not chat_history:
-        return []
+def truncate_history(chat_history, max_tokens=30000, preserve_head=1, preserve_tail=2):
+    if not chat_history or estimate_tokens(chat_history) <= max_tokens:
+        return chat_history
 
     head = chat_history[:preserve_head]
     tail = chat_history[-preserve_tail:]
     middle = chat_history[preserve_head:-preserve_tail] if preserve_tail > 0 else chat_history[preserve_head:]
 
-    def history_to_text(msgs):
-        return "\n".join(f"{r}: {m}" for r, m in msgs)
+    # Calculate token counts for efficient removal
+    head_tokens = estimate_tokens(head)
+    tail_tokens = estimate_tokens(tail)
+    base_tokens = head_tokens + tail_tokens
 
-    full_tokens =  estimate_tokens(history_to_text(head + middle + tail))
+    print(f"Initial token count: {base_tokens} (head: {head_tokens}, tail: {tail_tokens})")
+    
+    # Process middle section from oldest to newest
+    new_middle = []
+    current_tokens = base_tokens
+    
+    for msg in reversed(middle):
+        msg_tokens = estimate_tokens([msg])
+        if current_tokens + msg_tokens <= max_tokens:
+            new_middle.insert(0, msg)
+            current_tokens += msg_tokens
+        else:
+            break
 
-    while middle and full_tokens > max_tokens:
-        middle.pop(0)  # remove from the oldest middle entry
-        full_tokens = estimate_tokens(history_to_text(head + middle + tail))
-        print(f"\nTrimming middle entries, new token count: {full_tokens}\n")
-
-    return head + middle + tail
-
+    return head + new_middle + tail
 #------------------------------------------------------------------------------------
-# Function to summarize chat history while preserving recent interactions
-def summarize_history(chat_history, client_llm, preserve_recent=4, model="Qwen/Qwen2.5-32B-Instruct-AWQ"):
-
+def summarize_history(chat_history, client_llm, preserve_recent=3, model="Qwen/Qwen2.5-32B-Instruct-AWQ"):
+    """Summarizes older conversation while preserving recent messages"""
     if len(chat_history) <= preserve_recent + 1:
         return chat_history
 
     old_messages = chat_history[:-preserve_recent]
     recent = chat_history[-preserve_recent:]
+    
+    # Check if the first message is already a summary
+    if old_messages and old_messages[0][0] == "system" and "Summary of earlier conversation" in old_messages[0][1]:
+        return chat_history
 
+    # Convert to text for summarization
     history_text = "\n".join(f"{role}: {msg}" for role, msg in old_messages if msg.strip())
-
+    
     if not history_text.strip():
         return recent
 
     try:
+        # More focused summarization prompt
         summary_result = client_llm.chat.completions.create(
             model=model,
             messages=[
                 {
                     "role": "system",
-                    "content": "Summarize the earlier part of this conversation into concise bullet points focused on resume/job screening."
+                    "content": """Summarize this resume screening conversation into 3–5 concise bullet points per candidate.
+                            - Ensure every candidate mentioned is covered individually.
+                            - Retain all relevant qualifications, skills, certifications, and experiences.
+                            - Do not omit any technical terms, role titles, project names, or numerical data (e.g., years of experience, scores).
+                            - Use clear, professional language to reflect resume screening context.
+                            - Do not generalize or merge data between candidates — maintain distinct bullet points per candidate."""
+
                 },
                 {"role": "user", "content": history_text}
-            ]
+            ],
+            max_tokens=300,
+            temperature=0.1
         )
         summary = summary_result.choices[0].message.content.strip()
-        summarized = [("system", f"Summary of earlier conversation:\n{summary}")]
-        return summarized + recent
+        return [("system", f"Summary of earlier conversation:\n{summary}")] + recent
 
     except Exception as e:
-        return [("system", f"Summarization failed: {e}")] + recent
+        return [("system", "Could not summarize history")] + recent[-2:]
+
 
 
 
@@ -567,42 +585,33 @@ def normal_chatbot(chat_history, user_prompt,selected_candidates=None):
         client_llm = OpenAI(base_url=base_url, api_key="-")
         
         system_prompt = f"""
-                You are a structured, intelligent, and professional Resume Screening Assistant.
+                            You are a structured Resume Screening Assistant. Your knowledge is limited to:
+                            {selected_candidates or 'NO RESUME DATA PROVIDED'}
 
-                Your entire knowledge is limited to the following parsed resume dataset:
-                {selected_candidates}
+                            ### Allowed:
+                            - Candidate recommendations with justifications
+                            - Questions about skills/education/experience
+                            - Professional analysis of resume data
 
-                You are not a general-purpose assistant. You must not answer questions outside the scope of this resume dataset.
+                            ### Forbidden:
+                            - Non-resume related topics
+                            - Hallucination beyond provided data
+                            - Jokes/opinions/general knowledge
 
-                ### Allowed:
-                - Recommend top candidates with justifications.
-                - Answer detailed questions about candidates' skills, education, experience, and project backgrounds.
-                - Provide professional analysis based solely on the parsed data.
-
-                ### Forbidden:
-                - Do **not** answer any questions unrelated to resumes, hiring, or CVs.
-                - Do **not** generate jokes, opinions, general knowledge, or perform unrelated tasks (e.g., math, coding help, fun facts).
-                - Do **not** infer, hallucinate, or guess missing information.
-
-                ### Style & Behavior:
-                - Be formal, concise, and professional.
-                - Use bullet points or markdown tables for clarity.
-                - If a question is outside scope, respond clearly:  
-                `"I'm designed only to answer questions related to resumes or candidate analysis. Please provide a relevant query."`
-
-                Do not break character under any circumstances.
-                """.strip()
+                            Respond to irrelevant queries: "I specialize in resume analysis only."
+                            """.strip()
 
         if not chat_history or chat_history[0][0] != "system":
-            chat_history.insert(0, ("system", system_prompt))
+            chat_history = [("system", system_prompt)] + chat_history
             print("System prompt added to chat history.\n")
 
         chat_history.append(("user", user_prompt))
 
         full_text = "\n".join(f"{r}: {m}" for r, m in chat_history)
-        if estimate_tokens(full_text)> 3500:
-            chat_history = summarize_history(chat_history, client_llm)
-            #chat_history = truncate_history(chat_history)
+        if estimate_tokens(full_text)> 2500:
+            print("Chat history exceeds 2500 tokens, summarizing and truncating...\n")
+            chat_history = summarize_history(chat_history, client_llm) 
+            chat_history = truncate_history(chat_history) # only triggers if the tokens is over 3000 (default in the truncate_history function)
 
         log_tokens("Before Chat Completion", chat_history)
 

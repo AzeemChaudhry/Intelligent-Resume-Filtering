@@ -4,7 +4,6 @@ import os
 import json
 from pathlib import Path
 from typing import List, Dict, Any
-import tempfile
 import shutil
 from datetime import datetime
 import time
@@ -15,7 +14,6 @@ from main import (
     create_vec_db,
     normal_chatbot,
     jd_analysis_pipeline,
-    complete_jd_analysis,
     filter_selected_candidates
 )
 
@@ -88,7 +86,7 @@ def process_resumes(uploaded_files):
         
         st.markdown(f"""
         <div class="status-success">
-            <h3>✅ Processing Complete!</h3>
+            <h3> Processing Complete!</h3>
             <p>Successfully processed {len(candidates)} candidates</p>
             <p>Automatically moving to job description...</p>
         </div>
@@ -100,7 +98,7 @@ def process_resumes(uploaded_files):
         st.rerun()
         
     except Exception as e:
-        st.error(f"❌ Processing failed: {str(e)}")
+        st.error(f"Processing failed: {str(e)}")
 
 # Job Description page
 def render_job_description_page():
@@ -108,7 +106,7 @@ def render_job_description_page():
     if not st.session_state.processing_complete:
         st.markdown("""
         <div class="status-info">
-            <h3>ℹ️ Upload Required</h3>
+            <h3>Upload Required</h3>
             <p>Please upload and process resume files first.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -206,7 +204,7 @@ def run_analysis_pipeline(job_description, top_k=5, selected_indexes=None, all_c
 
             st.markdown("""
             <div class="status-success">
-                <h3>✅ Analysis Complete!</h3>
+                <h3>Analysis Complete!</h3>
                 <p>Detailed candidate analysis has been generated</p>
                 <p>Moving to analysis results...</p>
             </div>
@@ -229,50 +227,6 @@ def analyze_job_description(job_description, top_k):
     run_analysis_pipeline(job_description=job_description, top_k=top_k, mode="selection")
 
 
-
-
-
-# def analyze_job_description(job_description, top_k):
-#     """Analyze job description and find candidates with auto-transition"""
-    
-#     st.markdown("""
-#     <div class="status-processing">
-#         <h3>🔍 Analyzing Job Description</h3>
-#         <p>Finding the best matching candidates...</p>
-#     </div>
-#     """, unsafe_allow_html=True)
-    
-#     progress_bar = st.progress(0)
-    
-#     try:
-#         progress_bar.progress(30)
-#         result = jd_analysis_pipeline(
-#             chat_history=st.session_state.chat_history,
-#             user_prompt=job_description,
-#             top_k=top_k
-#         )
-#         progress_bar.progress(100)
-
-#         if result["stage"] == "selection":
-#             st.session_state.candidates = result["candidates"]
-#             st.session_state.job_description = job_description
-#             st.session_state.chat_history = result["chat_history"]
-
-#             st.markdown(f"""
-#             <div class="status-success">
-#                 <h3>✅ Analysis Complete!</h3>
-#                 <p>Found {len(result["candidates"])} matching candidates</p>
-#                 <p>Moving to candidate selection...</p>
-#             </div>
-#             """, unsafe_allow_html=True)
-#             time.sleep(2)
-#             st.session_state.current_page = 'candidates'
-#             st.rerun()
-#         else:
-#             st.error(f"Analysis failed: {result.get('response', 'Unknown error')}")
-
-#     except Exception as e:
-#         st.error(f"Error analyzing job description: {str(e)}")
 
 def get_candidates_df():
     data = []
