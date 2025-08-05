@@ -13,6 +13,7 @@ from main import (
     initialize_collection, 
     create_vec_db,
     normal_chatbot,
+    maintaining_chat_history,
     jd_analysis_pipeline,
     filter_selected_candidates
 )
@@ -74,6 +75,7 @@ def process_resumes(uploaded_files):
         # Save uploaded files
         file_paths = []
         for file in uploaded_files:
+            print(f"Processing file: {file.name}")
             file_path = os.path.join(save_dir, file.name)
             with open(file_path, 'wb') as f:
                 f.write(file.getbuffer())
@@ -144,7 +146,7 @@ Include:
         top_k = st.slider("Number of candidates to find", 1, len(st.session_state.candidates), 1)
     
     # Analyze button
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2 = st.columns([1, 2])
     with col2:
         if st.button("🔍 Find Matching Candidates", type="primary", use_container_width=True):
             if job_description.strip():
@@ -182,7 +184,7 @@ def run_analysis_pipeline(job_description, top_k=5, selected_indexes=None, all_c
 
         if result["stage"] == "selection":
             st.session_state.candidates = result["candidates"]
-            st.session_state.job_description = job_description
+            st.session_state.job_description = result["parsed_job_description"]
             st.session_state.chat_history = result["chat_history"]
 
             st.markdown(f"""
@@ -462,7 +464,10 @@ def render_chat_page():
     else:
         # Display chat history
         st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-        for role, message in display_history:
+        for message_dict in display_history:
+            role = message_dict["role"]
+            message = message_dict["content"]
+
             if role == "user":
                 st.markdown(f"""
                 <div class="chat-message user-message">
@@ -477,7 +482,7 @@ def render_chat_page():
                     {message}
                 </div>
                 """, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown(" Ask a Question")
     user_input = st.text_area(
@@ -507,8 +512,12 @@ def process_chat_message(user_input):
 
     try:
         temp_history = st.session_state.chat_history.copy()
-        temp_history.append(("user", user_input))
-        
+        chat_addition = {
+            "role": "user",
+            "content": user_input
+        }
+        temp_history.append(chat_addition)
+
         with st.spinner("AI is thinking..."):
             print(st.session_state.selected_candidates)
             selected_candidates = filter_selected_candidates(
@@ -518,20 +527,31 @@ def process_chat_message(user_input):
 
             print(f"Selected candidates for chat: {selected_candidates}")
 
-            response = normal_chatbot(temp_history, user_input,selected_candidates)
-        st.session_state.chat_history.append(("user", user_input))
-        st.session_state.chat_history.append(("assistant", response))
-        
+            response = normal_chatbot(temp_history, user_input, st.session_state.job_description, selected_candidates)
+
+        st.session_state.chat_history = maintaining_chat_history(
+            st.session_state.chat_history, 
+            user_input,
+            "user"
+        )
+        st.session_state.chat_history = maintaining_chat_history(
+            st.session_state.chat_history,
+            response,
+            "assistant"
+        )
+
         if 'chat_display_history' not in st.session_state:
             st.session_state.chat_display_history = []
-        st.session_state.chat_display_history.append(("user", user_input))
-        st.session_state.chat_display_history.append(("assistant", response))
+
+        st.session_state.chat_display_history.append({"role": "user", "content": user_input})
+        st.session_state.chat_display_history.append({"role": "assistant", "content": response})
         st.session_state.chat_input_key += 1
         
         st.rerun()
         
     except Exception as e:
         st.error(f"Error processing message: {str(e)}")
+
 
 # Main app
 def main():
