@@ -556,6 +556,22 @@ def display_chat_history(chat_history: List[Dict[str, str]]):
 
     print("\n\n".join(display_lines))
 
+#-----------------------------------------------------------------------------------------
+#function to write chathistory to a file 
+def save_chat_history_to_file(chat_history: List[Dict[str, str]], filename: str = "chat_history.txt"):
+    """
+    Save the chat history to a text file.
+    """
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            for entry in chat_history:
+                role = entry.get("role", "unknown")
+                content = entry.get("content", "")
+                f.write(f"[{role}]: {content}\n\n")
+        print(f"Chat history saved to {filename}")
+    except Exception as e:
+        print(f"Error saving chat history: {e}")
+
 
 #-------------------------------------------------------------------
 # Function to display all candidates in a structured format
@@ -587,19 +603,11 @@ import string
 def clean_user_input(text: str, lowercase: bool = True, remove_special_chars: bool = True) -> str:
     if not isinstance(text, str):
         return ""
-
-    # Remove leading/trailing whitespace
     text = text.strip()
-
-    # Replace multiple spaces/tabs/newlines with single space
     text = re.sub(r'\s+', ' ', text)
-
-    # Remove non-printable characters
     text = ''.join(filter(lambda x: x in string.printable, text))
     if remove_special_chars:
         text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
-
-    # Optional: Convert to lowercase
     if lowercase:
         text = text.lower()
 
@@ -780,3 +788,11 @@ def complete_jd_analysis(job_description, selected_candidates, chat_history):
         return error_msg, chat_history
     
 #---------------------------------------------------------------------
+##todo  Make a button to write the current chat history to a file [done]
+##todo Do the summary part where it summarizes the chat history [in progress]
+##todo Embed the summarized history into the system prompt for the next query [in progress]
+## todo make the logging neater [pending]
+
+
+
+

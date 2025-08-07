@@ -4,6 +4,7 @@ import os
 import json
 from pathlib import Path
 from typing import List, Dict, Any
+import io
 import shutil
 from datetime import datetime
 import time
@@ -505,6 +506,22 @@ def render_chat_page():
             st.session_state.chat_display_history = []
             st.session_state.chat_input_key += 1
             st.rerun()
+        if st.session_state.chat_history:
+            chat_md = ""
+            for entry in st.session_state.chat_history:
+                role = entry.get("role", "unknown").capitalize()
+                content = entry.get("content", "").strip()
+                chat_md += f"### {role}\n\n{content}\n\n---\n\n"
+
+            buffer = io.StringIO(chat_md)
+            st.download_button(
+                label="Download Chat History (Markdown)",
+                data=buffer.getvalue(),
+                file_name="chat_history.md",
+                mime="text/markdown",
+                use_container_width=True
+            )
+
 
 
 def process_chat_message(user_input):
