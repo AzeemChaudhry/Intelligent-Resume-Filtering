@@ -12,17 +12,16 @@ from collections import defaultdict
 from datetime import datetime
 import pytesseract
 from transformers import AutoTokenizer
-import tiktoken 
+import tiktoken
 from pdf2image import convert_from_path
+
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-current_date_str = datetime.today().strftime("%d %b %Y") 
+current_date_str = datetime.today().strftime("%d %b %Y")
 
 base_url = "http://172.16.2.214:8000/v1"
 
 
-
-
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # pydantic model for resume information
 class ResumeInfo(BaseModel):
     name: str
@@ -33,14 +32,16 @@ class ResumeInfo(BaseModel):
     candidate_summary: str
     work_experience_years: float
     filepath: str
-#---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
 # Function to extract text from PDF using OCR
 def pdf_to_text(pdf_path: str) -> str:
     try:
         pages = convert_from_path(pdf_path, dpi=200)
         extracted_text = []
         for i, page in enumerate(pages):
-            text = pytesseract.image_to_string(page, lang='eng', config='--psm 3')
+            text = pytesseract.image_to_string(page, lang="eng", config="--psm 3")
             cleaned = text.strip()
             if cleaned:
                 extracted_text.append(cleaned)
@@ -50,10 +51,13 @@ def pdf_to_text(pdf_path: str) -> str:
         print(f"Error extracting text from {pdf_path}: {e}")
         return ""
 
-#---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 def get_json_schema():
     return ResumeInfo.model_json_schema()
-#---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
 # Function to call the LLM with a prompt and schema
 def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
     try:
@@ -61,7 +65,7 @@ def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
         response = client.chat.completions.create(
             model="Qwen/Qwen2.5-32B-Instruct-AWQ",
             messages=[{"role": "user", "content": prompt}],
-            extra_body={"guided_json": schema}
+            extra_body={"guided_json": schema},
         )
         output_text = response.choices[0].message.content
 
@@ -76,7 +80,8 @@ def LLM_call(prompt: str, schema: dict) -> Dict[str, Any]:
         print(f"Error in LLM call: {e}")
         return {}
 
-#---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 # Function to parse the markdown text and extract structured data
 def parsing_helper(markdown_text: str, filepath: str) -> dict:
     schema = get_json_schema()
@@ -160,7 +165,9 @@ def parsing_helper(markdown_text: str, filepath: str) -> dict:
     """
 
     return LLM_call(prompt, schema)
-#---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
 # Function to parse a directory of CVs and extract structured data
 def cv_parser_pipeline(path: str) -> List[dict]:
     candidates = []
@@ -179,11 +186,13 @@ def cv_parser_pipeline(path: str) -> List[dict]:
             print(f"Error processing {filename}: {e}")
     return candidates
 
-#---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 # Initialize Qdrant client and embedding model
 client = QdrantClient("localhost", port=6333)
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 required_fields = ["skills", "education", "work_experience", "projects"]
+
 
 def initialize_collection(collection_name: str = "cv_data"):
     """Delete the collection if it exists, then create it from scratch"""
@@ -197,16 +206,20 @@ def initialize_collection(collection_name: str = "cv_data"):
     client.create_collection(
         collection_name=collection_name,
         vectors_config={
-            f: VectorParams(size=384, distance=Distance.COSINE)
-            for f in required_fields
-        }
+            f: VectorParams(size=384, distance=Distance.COSINE) for f in required_fields
+        },
     )
     print(f"Created collection: {collection_name}")
-#---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
+
 
 def zero_vector(dim=384) -> List[float]:
     return [0.0] * dim
-#---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
 # Function to join and embed fields into a single vector
 def join_and_embed(field_list: list, model=embedding_model) -> List[float]:
     if not field_list:
@@ -230,7 +243,9 @@ def join_and_embed(field_list: list, model=embedding_model) -> List[float]:
         return zero_vector()
 
     return model.encode([text])[0].tolist()
-#---------------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------------
 # Function to insert a candidate into the Qdrant collection
 def insert_candidate(candidate: dict, collection_name="cv_data"):
     vector_data = {f: join_and_embed(candidate.get(f, [])) for f in required_fields}
@@ -245,20 +260,23 @@ def insert_candidate(candidate: dict, collection_name="cv_data"):
         "work_experience_years": candidate.get("work_experience_years", None),
     }
     pid = candidate.get("id", hash(candidate.get("name", "")) & 0xFFFFFFFFFFFFFFFF)
-    client.upsert(collection_name=collection_name, points=[PointStruct(
-        id=pid,
-        vector=vector_data,
-        payload=payload
-    )])
-#-------------------------------------------------------------------------------
+    client.upsert(
+        collection_name=collection_name,
+        points=[PointStruct(id=pid, vector=vector_data, payload=payload)],
+    )
+
+
+# -------------------------------------------------------------------------------
 # Function to create the vector database from a list of candidates
 def create_vec_db(candidates: List[dict]):
     for cand in candidates:
-        print(f"Inserting candidate: {cand.get('name', 'Unknown')} from {cand.get('filepath', 'Unknown')}")
+        print(
+            f"Inserting candidate: {cand.get('name', 'Unknown')} from {cand.get('filepath', 'Unknown')}"
+        )
         insert_candidate(cand)
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Function to parse a job description and extract structured data
 def job_description_parser(job_description: str) -> dict:
     schema = get_json_schema()
@@ -300,31 +318,40 @@ Job Description:
 """
     return LLM_call(prompt, schema)
 
-#---------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------
 # Function to search candidates in Qdrant based on job description
-def searching_Qdrant(parsed: dict, top_k: int = 5, weights: dict = None) -> Dict[int, float]:
+def searching_Qdrant(
+    parsed: dict, top_k: int = 5, weights: dict = None
+) -> Dict[int, float]:
     job_vectors = {f: join_and_embed(parsed.get(f, [])) for f in required_fields}
     if weights is None:
         weights = {f: 0.25 for f in required_fields}
     else:
         total = sum(weights.values())
-        weights = {f: (weights[f]/total) for f in weights}
+        weights = {f: (weights[f] / total) for f in weights}
 
-    all_hits = {f: client.search(
-        collection_name="cv_data",
-        query_vector=(f, job_vectors[f]),
-        limit=top_k,
-        with_payload=True,
-        with_vectors=False
-    ) for f in required_fields}
+    all_hits = {
+        f: client.search(
+            collection_name="cv_data",
+            query_vector=(f, job_vectors[f]),
+            limit=top_k,
+            with_payload=True,
+            with_vectors=False,
+        )
+        for f in required_fields
+    }
 
     scores = defaultdict(float)
     for f, hits in all_hits.items():
         for hit in hits:
             scores[hit.id] += hit.score * weights.get(f, 0)
     return scores
-#----------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------
 # Function to sort candidates based on their scores
+
 
 def sorting_candidates(score_board: Dict[int, float]) -> List[dict]:
     ranked = sorted(score_board.items(), key=lambda x: x[1], reverse=True)
@@ -334,7 +361,9 @@ def sorting_candidates(score_board: Dict[int, float]) -> List[dict]:
     offset = 0
 
     while len(results) < len(candidate_ids):
-        pts, next_offset = client.scroll("cv_data", with_payload=True, with_vectors=False, limit=100, offset=offset)
+        pts, next_offset = client.scroll(
+            "cv_data", with_payload=True, with_vectors=False, limit=100, offset=offset
+        )
         for pt in pts:
             if pt.id in candidate_ids:
                 info = pt.payload.copy()
@@ -345,32 +374,120 @@ def sorting_candidates(score_board: Dict[int, float]) -> List[dict]:
             break
         offset = next_offset
 
-
     print(f"\nTotal candidates sorted: {len(results)}")
     print(f"Top candidates: {results[:5]}\n")
 
     return results
 
 
+# -------------------------------------------------------------------------------------------------------------------
+# estimating tokens using Qwen tokenizer
+
+
+def count_tokens(text: str) -> int:
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-32B-Instruct-AWQ")
+    tokens = tokenizer.encode(text, add_special_tokens=False)
+    return len(tokens)
+
+
+# =============================================================
+def count_chat_tokens(text: list[dict]) -> int:
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-32B-Instruct-AWQ")
+    count = 0
+
+    for response in text:
+        # Assuming 'content' contains the message text
+        if "content" in response:
+            tokens = tokenizer.encode(response["content"], add_special_tokens=False)
+            count += len(tokens)
+
+    return count
+
+
+# -------------------------------------------------------------------------------------------------------------------
+
+
+## function that summarizes the selected candidates used in"normal_chatbot" function`
 def summarizer(candidates: List[dict]) -> List[dict]:
-    """"summarizes the information that is provided in the candidates list into a more concise format"""""
+    """"summarizes the information that is provided in the candidates list into a more concise format""" ""
     summarize = []
-    for candidate in candidates: 
+    for candidate in candidates:
         summary = {
             "name": candidate.get("name", "N/A"),
             "skills": list(set(candidate.get("skills", []))),
             "education": list(set(candidate.get("education", []))),
             "work_experience_years": candidate.get("work_experience_years", 0),
-            "filepath": candidate.get("filepath", "N/A")
+            "filepath": candidate.get("filepath", "N/A"),
         }
         summarize.append(summary)
-        print(f"Summarized candidate: {summary['name']} with {summary['work_experience_years']} years of experience.")
+        print(
+            f"Summarized candidate: {summary['name']} with {summary['work_experience_years']} years of experience."
+        )
 
     return summarize
 
 
-#-------------------------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+## function that summarizes the user message using the LLM
+def summarize_llm(
+    text: str,
+    max_summary_tokens: int = 150,
+    client=OpenAI(base_url=base_url, api_key="-"),
+) -> str:
+    try:
+        # Create optimized system prompt for summarization
+        system_prompt = (
+            "You are an expert text summarizer. Create a concise summary that captures "
+            "ALL key information from the provided text. Preserve specific details like: "
+            "- Names, places, and numbers\n"
+            "- Technical terms and jargon\n"
+            "- Core arguments and conclusions\n"
+            "Keep the summary under {max_tokens} tokens."
+        ).format(max_tokens=max_summary_tokens)
+
+        # Make API request with optimized parameters
+        response = client.chat.completions.create(
+            model="Qwen/Qwen2.5-32B-Instruct-AWQ",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Text to summarize:\n{text}"},
+            ],
+            temperature=0.3,
+            max_tokens=max_summary_tokens,
+            top_p=0.95,
+        )
+
+        summary = response.choices[0].message.content.strip()
+        print(f"Summarized {len(text)} chars → {len(summary)} chars")
+        return summary
+
+    except Exception as e:
+        print(f"Summarization error: {e}\nReturning original text")
+        return text
+
+
+## testing first summarizer function
+def summarize_history_complete(chat_history: List[Dict]) -> List[Dict]:
+    """the summarizer function will summarize the entire chat history in one go and return list[Dict] (summarized version)"""
+
+    print(f"Summarizing chat history with {len(chat_history)} messages.")
+    print(f"Chat history before summarizing: {chat_history}\n")
+
+    to_summarize = chat_history[:-2] if len(chat_history) > 2 else chat_history
+    chat_history = chat_history[-2:] if len(chat_history) > 2 else chat_history
+    text = "\n".join([f"{msg['role']}: {msg['content']}" for msg in to_summarize])
+    summary = summarize_llm(text)
+
+    summarized_history = summary
+
+    print(f"Summarized chat history length: {len(summarized_history)}")
+    print(f"chat_history before summarizing: {len(chat_history)}\n")
+    return chat_history, summarized_history
+
+
+# -------------------------------------------------------------------------------------------------------------------
 # Function to perform in-depth candidate analysis based on job description and selected candidates
+
 
 def analysis(job_description, selected_candidates, top_k=5):
 
@@ -379,14 +496,16 @@ def analysis(job_description, selected_candidates, top_k=5):
 
     if len(selected_candidates) > 5:
 
-
         print("Summarizing candidates for analysis to prevent token overflow...")
-        print(f"candidates before summarizing :  {len(selected_candidates)} ,(for analysis).")
-
+        print(
+            f"candidates before summarizing :  {len(selected_candidates)} ,(for analysis)."
+        )
 
         selected_candidates = summarizer(selected_candidates)
 
-        print(f"candidates after summarizing :  {len(selected_candidates)} ,(for analysis).")
+        print(
+            f"candidates after summarizing :  {len(selected_candidates)} ,(for analysis)."
+        )
 
     user_prompt = f"""
 You are an expert technical recruiter. Use the information provided below to perform an in-depth candidate evaluation.
@@ -428,123 +547,36 @@ Analyze the candidates with respect to the job description and:
    - Start with your top recommended candidate
    - Do not disclose vector scores
 """
-    
+
     try:
         client_llm = OpenAI(base_url=base_url, api_key="-")
         response = client_llm.chat.completions.create(
             model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-            messages=[{"role": "user", "content": user_prompt},
-            ]
+            messages=[
+                {"role": "user", "content": user_prompt},
+            ],
         )
         return response.choices[0].message.content
     except Exception as e:
         return f"Error in analysis: {str(e)}"
-#-----------------------------------------------------------------------------------------
 
 
-def estimate_tokens(text, model_name="Qwen/Qwen2.5-32B-Instruct-AWQ"):
-        if not isinstance(text, str):
-            text = str(text)  # Ensure text is a string
-        
-        tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-        tokens = tokenizer.encode(text)
-        return len(tokens)
-
-#----------------------------------------------------------------------------------------------
-def truncate_history(chat_history, max_tokens=30000, preserve_head=1, preserve_tail=2):
-    if not chat_history or estimate_tokens(chat_history) <= max_tokens:
-        return chat_history
-
-    head = chat_history[:preserve_head]
-    tail = chat_history[-preserve_tail:]
-    middle = chat_history[preserve_head:-preserve_tail] if preserve_tail > 0 else chat_history[preserve_head:]
-
-    # Calculate token counts for efficient removal
-    head_tokens = estimate_tokens(head)
-    tail_tokens = estimate_tokens(tail)
-    base_tokens = head_tokens + tail_tokens
-
-    print(f"Initial token count: {base_tokens} (head: {head_tokens}, tail: {tail_tokens})")
-    
-    # Process middle section from oldest to newest
-    new_middle = []
-    current_tokens = base_tokens
-    
-    for msg in reversed(middle):
-        msg_tokens = estimate_tokens([msg])
-        if current_tokens + msg_tokens <= max_tokens:
-            new_middle.insert(0, msg)
-            current_tokens += msg_tokens
-        else:
-            break
-
-    return head + new_middle + tail
-#------------------------------------------------------------------------------------
-def summarize_history(chat_history, client_llm, preserve_recent=2, model="Qwen/Qwen2.5-32B-Instruct-AWQ"):
-    """Summarizes older conversation while preserving recent messages"""\
-
-    print("Summarizing chat history to reduce token count...\n")
-    print(f"Current chat history length: {len(chat_history)} messages\n")
-
-    print("content of chat history : \n")
-    display_chat_history(chat_history)
-
-    if len(chat_history) <= preserve_recent + 1:
-        return chat_history
-
-    old_messages = chat_history[:-preserve_recent]
-    recent = chat_history[-preserve_recent:]
-
-    # Convert to text for summarization
-    history_text = "\n".join(f"{msg['role']}: {msg['content']}" for msg in old_messages if msg["content"].strip())
-
-    
-    if not history_text.strip():
-        return recent
-
-    try:
-        # More focused summarization prompt
-        summary_result = client_llm.chat.completions.create(
-            model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": """Summarize this resume screening conversation into 3–5 concise bullet points per candidate.
-                            - Ensure every candidate mentioned is covered individually.
-                            - Retain all relevant qualifications, skills, certifications, and experiences.
-                            - Do not omit any technical terms, role titles, project names, or numerical data (e.g., years of experience, scores).
-                            - Use clear, professional language to reflect resume screening context.
-                            - Do not generalize or merge data between candidates — maintain distinct bullet points per candidate."""
-
-                },
-                {"role": "user", "content": history_text}
-            ],
-            max_tokens=800,
-            temperature=0.1
-        )
-        summary = summary_result.choices[0].message.content.strip()
-        return [("system", f"Summary of earlier conversation:\n{summary}")] + recent
-
-    except Exception as e:
-        return [("system", "Could not summarize history")] + recent[-2:]
-
-
-#-----------------------------------------------------------------------------------------
-# initializing the chat_history 
+# ------------------------------------------------------------------------------------
+# initializing the chat_history
 chat_history = []
-#--------------------------------------------------------------------
-def maintaining_chat_history(chat_history, prompt, role="user"):
-     chat_entry = {
-        "role": role,
-        "content": prompt
-     }
-     chat_history.append(chat_entry)
-     return chat_history
 
-#-----------------------------------------------------------------------------------------
-#function to display the chat history in a readable format
+
+# --------------------------------------------------------------------
+def maintaining_chat_history(chat_history, prompt, role="user"):
+    chat_entry = {"role": role, "content": prompt}
+    chat_history.append(chat_entry)
+    return chat_history
+
+
+# -----------------------------------------------------------------------------------------
+# function to display the chat history in a readable format
 def display_chat_history(chat_history: List[Dict[str, str]]):
-  
+
     if not chat_history:
         return "No chat history available."
 
@@ -556,9 +588,12 @@ def display_chat_history(chat_history: List[Dict[str, str]]):
 
     print("\n\n".join(display_lines))
 
-#-----------------------------------------------------------------------------------------
-#function to write chathistory to a file 
-def save_chat_history_to_file(chat_history: List[Dict[str, str]], filename: str = "chat_history.txt"):
+
+# -----------------------------------------------------------------------------------------
+# function to write chathistory to a file
+def save_chat_history_to_file(
+    chat_history: List[Dict[str, str]], filename: str = "chat_history.txt"
+):
     """
     Save the chat history to a text file.
     """
@@ -573,7 +608,7 @@ def save_chat_history_to_file(chat_history: List[Dict[str, str]], filename: str 
         print(f"Error saving chat history: {e}")
 
 
-#-------------------------------------------------------------------
+# -------------------------------------------------------------------
 # Function to display all candidates in a structured format
 def display_all_candidates(candidates: List[dict]) -> str:
     candidate_summaries = []
@@ -590,33 +625,46 @@ def display_all_candidates(candidates: List[dict]) -> str:
 
     return "\n".join(candidate_summaries)
 
-#-----------------------------------------------------------------------------------------
 
-def filter_selected_candidates(all_candidates: List[dict], selected_indexes: List[int]) -> List[dict]:
-    return [all_candidates[i - 1] for i in selected_indexes if 1 <= i <= len(all_candidates)]
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
+def filter_selected_candidates(
+    all_candidates: List[dict], selected_indexes: List[int]
+) -> List[dict]:
+    return [
+        all_candidates[i - 1] for i in selected_indexes if 1 <= i <= len(all_candidates)
+    ]
+
+
+# -----------------------------------------------------------------------------------------
 
 import re
 import string
 
-def clean_user_input(text: str, lowercase: bool = True, remove_special_chars: bool = True) -> str:
+
+def clean_user_input(
+    text: str, lowercase: bool = True, remove_special_chars: bool = True
+) -> str:
     if not isinstance(text, str):
         return ""
     text = text.strip()
-    text = re.sub(r'\s+', ' ', text)
-    text = ''.join(filter(lambda x: x in string.printable, text))
+    text = re.sub(r"\s+", " ", text)
+    text = "".join(filter(lambda x: x in string.printable, text))
     if remove_special_chars:
-        text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
+        text = re.sub(r"[^a-zA-Z0-9\s]", "", text)
     if lowercase:
         text = text.lower()
 
     return text
-#----------------------------------------------------------------------------------------------------------------
-# Unified JD Analysis Pipeline
-def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_candidates=None, top_k=5):
-    global cached_resume_data
 
+
+# ----------------------------------------------------------------------------------------------------------------
+# Unified JD Analysis Pipeline
+def jd_analysis_pipeline(
+    chat_history, user_prompt, selected_indexes=None, all_candidates=None, top_k=5
+):
+    global cached_resume_data
 
     try:
         # STEP 1: Append the new user input
@@ -628,7 +676,6 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
 
             print(f"User prompt added to chat history: {user_prompt}\n")
             print(f"Current chat history length: {len(chat_history)} messages\n")
-
 
         # ------------------ STAGE 1: Candidate Selection ------------------
         if selected_indexes is None or all_candidates is None:
@@ -643,18 +690,20 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
                 "candidates_display": display,
                 "chat_history": chat_history,
                 "job_description": user_prompt,
-                "parsed_job_description": parsed
+                "parsed_job_description": parsed,
             }
 
         # ------------------ STAGE 2: Candidate Analysis ------------------
-        selected = filter_selected_candidates(all_candidates, selected_indexes) # returns only the selected candidates based on the indexes provided by the user
+        selected = filter_selected_candidates(
+            all_candidates, selected_indexes
+        )  # returns only the selected candidates based on the indexes provided by the user
         if not selected:
             error_msg = "No valid candidates selected for analysis."
             maintaining_chat_history(chat_history, error_msg, role="assistant")
             return {
                 "stage": "analysis",
                 "response": error_msg,
-                "chat_history": chat_history
+                "chat_history": chat_history,
             }
 
         result = analysis(user_prompt, selected, top_k=len(selected))
@@ -667,41 +716,77 @@ def jd_analysis_pipeline(chat_history, user_prompt, selected_indexes=None, all_c
         print("Current chat history content:")
         display_chat_history(chat_history)
 
-        return {
-            "stage": "analysis",
-            "response": result,
-            "chat_history": chat_history
-        }
+        return {"stage": "analysis", "response": result, "chat_history": chat_history}
 
     except Exception as e:
         error_msg = f"Error in unified JD pipeline: {str(e)}"
         maintaining_chat_history(chat_history, error_msg, role="assistant")
-        return {
-            "stage": "error",
-            "response": error_msg,
-            "chat_history": chat_history
-        }
+        return {"stage": "error", "response": error_msg, "chat_history": chat_history}
 
-#---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 import ast
-def format_candidate_data(data_str: str) -> str:
-    """
-    Converts a string representation of Python dicts/lists (with single quotes, escaped backslashes)
-    into a clean JSON-like formatted string for use in LLM prompts/logs.
-    """
-    try:
-        # Convert string with single quotes to proper Python object
-        data = ast.literal_eval(data_str)
 
-        # Convert the Python object to a JSON-like pretty string
-        pretty_string = json.dumps(data, indent=2, ensure_ascii=False)
-        return pretty_string
+
+def format_candidate_data(data: Any) -> str:
+    """
+    Safely convert candidate data (dict/list or string) into a pretty JSON string.
+    Returns a JSON pretty string on success, or an informative error string on failure.
+    """
+    # If it's already a Python object, serialize directly
+    if not isinstance(data, str):
+        try:
+            return json.dumps(data, indent=2, ensure_ascii=False)
+        except Exception as e:
+            return f"Error serializing Python object: {e}"
+
+    # Now data is a string -> try JSON first (most strict/correct)
+    s = data.strip()
+    try:
+        obj = json.loads(s)
+        return json.dumps(obj, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+    # Next, try ast.literal_eval for Python-literal-like strings
+    try:
+        obj = ast.literal_eval(s)
+        return json.dumps(obj, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+    # Heuristic fixes (best-effort): convert None/True/False, remove trailing commas, fix simple single quotes
+    try:
+        s_fixed = s
+        s_fixed = re.sub(r"\bNone\b", "null", s_fixed)
+        s_fixed = re.sub(r"\bTrue\b", "true", s_fixed)
+        s_fixed = re.sub(r"\bFalse\b", "false", s_fixed)
+        # remove trailing commas before } or ]
+        s_fixed = re.sub(r",\s*(?=[}\]])", "", s_fixed)
+        # convert simple single-quoted keys to double-quoted keys:  'key':  -> "key":
+        s_fixed = re.sub(r"'([^']+)'\s*:", r'"\1":', s_fixed)
+        # convert single-quoted string values (naive):  : 'value'  -> : "value"
+        s_fixed = re.sub(r":\s*'([^']*)'", r': "\1"', s_fixed)
+
+        obj = json.loads(s_fixed)
+        return json.dumps(obj, indent=2, ensure_ascii=False)
     except Exception as e:
-        return f"Error parsing candidate data: {e}"
+        # If everything failed, return a helpful error with the start of original string for debugging
+        snippet = (s[:300] + "...") if len(s) > 300 else s
+        return f"Error parsing candidate data after heuristics: {e}\nOriginal (snippet): {snippet}"
+
+
 # ----------------------------------------------------------------------------------------------------
 
-def normal_chatbot(chat_history, user_prompt,jd,selected_candidates=None,): 
-    ## entering normal chatbot mode 
+
+def normal_chatbot(
+    chat_history,
+    chat_history_summarized,
+    user_prompt,
+    jd,
+    selected_candidates=None,
+):
+    ## entering normal chatbot mode
 
     print(f"Entering normal chatbot mode")
     print("\n\nCurrent chat history content:")
@@ -713,15 +798,23 @@ def normal_chatbot(chat_history, user_prompt,jd,selected_candidates=None,):
 
         if not chat_history or chat_history[0]["role"] != "system":
             print("No system prompt found, creating a new one...")
-            if  selected_candidates is not None: 
-                selected_candidates = format_candidate_data(selected_candidates)
-            
+
+        if count_chat_tokens(chat_history) > 2500:
+            print("Chat tokens exceeded, Summarizing...")
+            chat_history, chat_history_summarized = summarize_history_complete(
+                chat_history
+            )
+        if selected_candidates is not None:
+            # selected_candidates = format_candidate_data(selected_candidates)
+
             system_prompt = f"""
                                 You are a structured Resume Screening Assistant. Your knowledge is limited to:
                                 {selected_candidates or 'NO RESUME DATA PROVIDED'}
                                 Your task is to assist with resume analysis and candidate selection based on the provided job description.
                                 ## Job Description:
                                 {jd}
+                                You are given the following chathistory to refer to for context and previous interactions:
+                                {chat_history_summarized}
                                 ### Allowed:
                                 - Candidate recommendations with justifications
                                 - Questions about skills/education/experience
@@ -735,64 +828,34 @@ def normal_chatbot(chat_history, user_prompt,jd,selected_candidates=None,):
                                 Respond to irrelevant queries: "I specialize in resume analysis only."
                                 """.strip()
 
-            
             chat_history = [{"role": "system", "content": system_prompt}] + chat_history
-
 
         maintaining_chat_history(chat_history, user_prompt, role="user")
 
         print(f"User prompt added to chat history: {user_prompt}\n")
         print(f"Current chat history length: {len(chat_history)} messages\n")
+        print(f"Chat tokens : {count_chat_tokens(chat_history)}")
 
         print("Current chat history content:")
         display_chat_history(chat_history)
 
-
-        full_text = "\n".join(f"{entry['role']}: {entry['content']}" for entry in chat_history)
-
-        # if estimate_tokens(full_text)> 2500:
-        # #    print("Chat history exceeds 2500 tokens, summarizing and truncating...\n")
-        #    # chat_history = summarize_history(chat_history, client_llm) 
-            #chat_history = truncate_history(chat_history) # only triggers if the tokens is over 3000 (default in the truncate_history function)
-
         messages = chat_history
         result = client_llm.chat.completions.create(
-            model="Qwen/Qwen2.5-32B-Instruct-AWQ",
-            messages=messages
+            model="Qwen/Qwen2.5-32B-Instruct-AWQ", messages=messages
         )
-        
+
         response = result.choices[0].message.content
         print(f"Chatbot response: {response}\n")
         maintaining_chat_history(chat_history, response, role="assistant")
 
-        
-        return response
+        return response, chat_history, chat_history_summarized
 
     except Exception as e:
-        return f"Error in chatbot: {str(e)}"
-#---------------------------------------------------------------------
-def complete_jd_analysis(job_description, selected_candidates, chat_history):
-    """
-    Complete the JD analysis with selected candidates
-    This is called after user selects candidates
-    """
-    try:
-        # Perform detailed analysis
-        response = analysis(job_description, selected_candidates, top_k=len(selected_candidates))
-        maintaining_chat_history(chat_history, response, role="assistant")
-        return response, chat_history
-        
-    except Exception as e:
-        error_msg = f"Error in analysis: {str(e)}"
-        maintaining_chat_history(chat_history, error_msg, role="assistant")
-        return error_msg, chat_history
-    
-#---------------------------------------------------------------------
+        return f"Error in chatbot: {str(e)}", chat_history, chat_history_summarized
+
+
+# ---------------------------------------------------------------------
 ##todo  Make a button to write the current chat history to a file [done]
 ##todo Do the summary part where it summarizes the chat history [in progress]
 ##todo Embed the summarized history into the system prompt for the next query [in progress]
 ## todo make the logging neater [pending]
-
-
-
-

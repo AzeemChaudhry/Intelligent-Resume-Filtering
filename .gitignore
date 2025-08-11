@@ -199,3 +199,5 @@ models/TinyLlama-1.1B-Chat/config.json
 /Resumes
 /Uploaded_Files
 /.gradio
+/test.ipynb
+/llm_responses
