@@ -804,6 +804,9 @@ def normal_chatbot(
             chat_history, chat_history_summarized = summarize_history_complete(
                 chat_history
             )
+            print(
+                f"\n\n\n\ chat history summarized : \n\n {chat_history_summarized} \n\n\n"
+            )
         if selected_candidates is not None:
             # selected_candidates = format_candidate_data(selected_candidates)
 
