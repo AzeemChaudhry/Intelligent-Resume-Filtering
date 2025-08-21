@@ -12,7 +12,6 @@ from collections import defaultdict
 from datetime import datetime
 import pytesseract
 from transformers import AutoTokenizer
-import tiktoken
 from pdf2image import convert_from_path
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
